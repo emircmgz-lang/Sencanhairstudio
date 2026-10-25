@@ -1,0 +1,8 @@
+const fs=require('node:fs'),path=require('node:path'),{DatabaseSync}=require('node:sqlite');
+const source=process.argv[2];if(!source){console.error('Kullanım: node tools/restore.cjs /tam/yol/yedek.sqlite\nÖNCE SUNUCUYU DURDURUN.');process.exit(1)}
+const file=path.resolve(source),dataDir=path.resolve(process.env.DATA_DIR||path.join(__dirname,'../data')),target=path.join(dataDir,'appointments.sqlite');
+if(file===target){console.error('Kaynak ve hedef aynı olamaz.');process.exit(1)}
+let db;try{db=new DatabaseSync(file,{readOnly:true});if(db.prepare('PRAGMA integrity_check').get().integrity_check!=='ok')throw Error();for(const table of ['business','admin','sessions','appointments','email_outbox'])db.prepare('SELECT 1 FROM '+table+' LIMIT 1').get();db.close();db=null;fs.mkdirSync(dataDir,{recursive:true,mode:0o700});
+if(fs.existsSync(target+'-wal')||fs.existsSync(target+'-shm'))throw Error('SQLite WAL / SHM dosyası bulundu. Sunucunun tamamen durduğunu doğrulayın; çalışan veritabanının üstüne yazılmaz.');
+if(fs.existsSync(target))fs.copyFileSync(target,target+'.before-restore-'+Date.now());fs.copyFileSync(file,target+'.restoring');fs.chmodSync(target+'.restoring',0o600);fs.renameSync(target+'.restoring',target);const clean=new DatabaseSync(target);clean.prepare('DELETE FROM sessions').run();clean.prepare("UPDATE email_outbox SET status='skipped' WHERE status='pending'").run();clean.close();console.log('Yedek geri yüklendi. Oturumlar kapatıldı ve geçmiş bildirimler tekrar gönderilmeyecek.');
+}catch(e){if(db)db.close();console.error(e.message||'Yedek okunamadı. Geçerli bir Şencan SQLite yedeği seçin.');process.exitCode=1}
