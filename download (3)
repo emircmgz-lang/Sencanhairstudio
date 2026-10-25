@@ -1,0 +1,17 @@
+Options -Indexes
+DirectoryIndex index.html index.php
+<IfModule mod_rewrite.c>
+RewriteEngine On
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^api/(.+)$ api/index.php?route=/$1 [QSA,L]
+RewriteRule ^randevu/?$ index.html [L]
+</IfModule>
+<FilesMatch "(^\.|\.(sql|gz|log|ini|env|sqlite|bak|cjs)$)">
+Require all denied
+</FilesMatch>
+<IfModule mod_headers.c>
+Header always set X-Content-Type-Options "nosniff"
+Header always set X-Frame-Options "DENY"
+Header always set Referrer-Policy "same-origin"
+</IfModule>

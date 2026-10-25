@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="tr" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#101612">
+    <script src="appearance.js?v=6"></script>
+    <title>Davut Şencan Hair Studio | Randevu</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="theme.css?v=5">
+    <link rel="stylesheet" href="appearance.css?v=6">
+    <link rel="stylesheet" href="heritage.css?v=7">
+    <link rel="stylesheet" href="services.css?v=10">
+    <link rel="stylesheet" href="mobile-polish.css?v=12">
+</head>
+<body class="customer-theme">
+    <div class="app-container">
+        <header class="heritage-header"><div class="heritage-photo" aria-hidden="true"><img src="assets/barber-reference.jpg" alt="" width="720" height="1280" fetchpriority="high"></div><div class="theme-control" data-selected="dark"><span class="theme-label-light">Beyaz</span><button type="button" role="switch" aria-checked="true" aria-label="Siyah tema açık. Beyaz temaya geç." class="theme-switch" data-theme-switch><span class="theme-switch-thumb" aria-hidden="true"></span></button><span class="theme-label-dark">Siyah</span></div><div class="heritage-emblem" aria-hidden="true"><svg viewBox="0 0 260 80" fill="none"><path d="M15 40 Q60 2 102 34 M158 34 Q200 2 245 40 M15 40 Q60 78 102 46 M158 46 Q200 78 245 40 M32 33 Q20 22 13 30 Q3 40 20 42 M228 33 Q240 22 247 30 Q257 40 240 42" stroke="currentColor" stroke-width="1"/><circle cx="130" cy="40" r="28" stroke="currentColor"/><path d="M116 52l31-31 M119 24l27 30" stroke="currentColor" stroke-width="2"/><circle cx="113" cy="56" r="7" stroke="currentColor" stroke-width="2"/><circle cx="150" cy="58" r="7" stroke="currentColor" stroke-width="2"/><path d="M15 40h76m78 0h76" stroke="currentColor" stroke-width=".5"/></svg></div>
+            <div class="eyebrow">SAÇ · SAKAL · BAKIM</div>
+            <h1 class="heritage-title" data-shop-name>Davut Şencan <span>Hair Studio</span></h1><div class="heritage-rule" aria-hidden="true"><span>✦</span></div>
+            <p data-shop-description>Kendinize bir saat ayırın. Gerisini bize bırakın.</p>
+        </header>
+
+        <nav class="customer-nav" aria-label="Randevu işlemleri"><button type="button" id="show-booking" class="active">Randevu al</button><button type="button" id="show-lookup">Randevumu sorgula</button><a class="customer-contact-link" href="#business-contact">Bize ulaşın</a></nav>
+        <p id="message" role="status" aria-live="polite"></p>
+        <main id="booking-flow">
+            <!-- Step 1: Select Barber -->
+            <section id="step-1" class="step active">
+                <h2>Ustanızı seçin</h2>
+                <div class="barber-grid" id="barber-list">
+                    <!-- Barbers will be injected here via JS -->
+                </div>
+            </section>
+
+            <!-- Step 2: Select Date & Time -->
+            <section id="step-2" class="step hidden">
+                <button class="back-btn" onclick="goBack(1)">← Geri</button>
+                <h2>Tarih ve Saat Seçin</h2>
+                <p id="selected-barber-name" class="subtitle"></p>
+                
+                <div class="date-selector">
+                    <input type="date" id="date-input" required>
+                </div>
+
+                <div class="time-grid" id="time-list">
+                    <!-- Time slots will be injected here -->
+                </div>
+            </section>
+
+            <!-- Step 3: Customer Details -->
+            <section id="step-3" class="step hidden">
+                <button class="back-btn" onclick="goBack(2)">← Geri</button>
+                <h2>Bilgileriniz</h2>
+                <div class="summary-box">
+                    <p><strong>Berber:</strong> <span id="summary-barber"></span></p>
+                    <p><strong>Zaman:</strong> <span id="summary-time"></span></p>
+                </div>
+                <form id="booking-form">
+                    <div class="input-group">
+                        <label for="customer-name">Adınız Soyadınız</label>
+                        <input type="text" id="customer-name" required placeholder="Örn: Ahmet Yılmaz">
+                    </div>
+                    <div class="input-group">
+                        <label for="customer-phone">Telefon Numaranız</label>
+                        <input type="tel" id="customer-phone" required placeholder="05XX XXX XX XX">
+                    </div>
+                    <section id="service-picker" class="service-picker" aria-label="Hizmetler ve fiyatlar"></section><div class="input-group"><label for="payment-method">Ödeme yöntemi</label><select id="payment-method" required><option value="cash">Nakit · işletmede</option><option value="card">Kart · işletmede</option><option value="transfer">Havale / EFT · işletmeyle görüşerek</option></select><p>Online tahsilat yapılmaz. Havale bilgileri için işletmeyle iletişime geçin.</p></div><button type="submit" class="primary-btn">Randevuyu Onayla</button>
+                </form>
+            </section>
+
+            <!-- Step 4: Success -->
+            <section id="step-4" class="step hidden success-state">
+                <div class="success-icon">✓</div>
+                <h2>Randevunuz Alındı!</h2>
+                <p><span id="success-details"></span></p><p id="success-services"></p>
+                <div class="booking-code"><small>RANDEVU KODUNUZ</small><strong id="booking-reference"></strong><p>Bu kodu saklayın. Telefon numaranızla birlikte sorgulama ve iptal için kullanılır.</p><button type="button" id="copy-code">Kodu kopyala</button></div><button type="button" id="success-lookup" class="secondary-btn">Randevumu görüntüle</button>
+                <button class="secondary-btn" onclick="resetFlow()">Yeni Randevu Al</button>
+            </section>
+        </main><section id="lookup-section" class="lookup-section" hidden><div class="eyebrow">RANDEVUNUZ KONTROLÜNÜZDE</div><h2>Randevunuzu sorgulayın</h2><p>Telefon numaranız ve randevu kodunuzla detayları görün.</p><form id="lookup-form"><div class="input-group"><label for="lookup-phone">Telefon numarası</label><input id="lookup-phone" type="tel" required autocomplete="tel" placeholder="05XX XXX XX XX"></div><div class="input-group"><label for="lookup-code">Randevu kodu</label><input type="text" id="lookup-code" required maxlength="64" autocomplete="off" placeholder="Örn: A3F91B72C0" autocapitalize="characters"></div><button type="submit" class="primary-btn">Randevuyu bul</button></form><p id="lookup-message" role="status" aria-live="polite"></p><div id="lookup-result" aria-live="polite"></div></section>
+        <section id="business-contact" class="business-contact" aria-label="İşletme adres ve iletişim bilgileri"><p class="contact-eyebrow" data-shop-name>Davut Şencan Hair Studio</p><h2>Bize ulaşın</h2><p data-business-empty>Adres ve iletişim bilgileri yakında paylaşılacak.</p><address data-business-address></address><p data-business-phone></p><div class="business-contact-actions"><a data-business-maps target="_blank" rel="noopener noreferrer">Yol tarifi al ↗</a><a data-business-call>İşletmeyi ara</a></div></section>
+        <footer class="studio-footer"><span data-shop-name>Davut Şencan Hair Studio</span><span>Size uygun saatte, koltuğunuz hazır.</span></footer>
+    </div>
+
+    <script src="business-contact.js?v=12"></script>
+    <script src="services.js?v=9"></script>
+    <script src="client.js?v=11"></script>
+    <script src="service-picker.js?v=9"></script>
+    <script src="app.js?v=10"></script>
+</body>
+</html>
+
+

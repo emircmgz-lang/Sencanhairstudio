@@ -1,0 +1,7 @@
+private/config.php
+private/backups/
+private/cron-status.json
+private/.cron.lock
+*.log
+.env
+.DS_Store

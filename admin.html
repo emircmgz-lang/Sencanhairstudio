@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="tr" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#101612">
+    <script src="appearance.js?v=6"></script>
+    <title>Yönetici Paneli | Davut Şencan Hair Studio</title>
+    <link rel="stylesheet" href="admin.css">
+    <link rel="stylesheet" href="theme.css?v=5">
+    <link rel="stylesheet" href="appearance.css?v=6">
+    <link rel="stylesheet" href="heritage.css?v=7">
+    <link rel="stylesheet" href="services.css?v=10">
+    <link rel="stylesheet" href="mobile-polish.css?v=11">
+</head>
+<body class="admin-theme">
+    <div class="dashboard">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo"><div class="studio-signature" aria-hidden="true">Ş</div>
+                <h2 data-shop-name>Davut Şencan <span>Hair Studio</span></h2>
+                <p>Yönetici Paneli</p><div class="theme-control" data-selected="dark"><span class="theme-label-light">Beyaz</span><button type="button" role="switch" aria-checked="true" aria-label="Siyah tema açık. Beyaz temaya geç." class="theme-switch" data-theme-switch><span class="theme-switch-thumb" aria-hidden="true"></span></button><span class="theme-label-dark">Siyah</span></div>
+            </div>
+            <nav>
+                <a href="#" class="nav-item active" data-tab="dashboard">
+                    <span class="icon">📊</span> Genel Bakış
+                </a>
+                <a href="#" class="nav-item" data-tab="appointments">
+                    <span class="icon">📅</span> Randevular
+                </a>
+                <a href="#" class="nav-item" data-tab="staff">
+                    <span class="icon">✂️</span> Çalışanlar
+                </a>
+                <a href="#" class="nav-item" data-tab="settings"><span class="icon">⚙️</span> İşletme Ayarları</a><a href="index.html" class="nav-item logout" target="_blank" rel="noopener">
+                    <span class="icon">🌐</span> Siteye Git
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <p id="admin-message" role="status" aria-live="polite"></p>
+            <section id="login-panel">
+                <h1>Yönetici Girişi</h1><p>Davut Şencan Hair Studio · İşletme yönetimi</p>
+                <form id="login-form"><label for="admin-password">Yönetici şifresi</label><input id="admin-password" type="password" required autocomplete="current-password"><button type="submit">Giriş yap</button></form>
+            </section>
+            <div id="admin-content" hidden>
+            <header class="topbar">
+                <h1 id="panel-title">Genel Bakış</h1>
+                <button id="logout-button">Çıkış yap</button>
+            </header>
+
+            <section id="booking-section">
+            <!-- Stats Grid -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h3>Seçili Günün Randevuları</h3>
+                    <div class="value" id="appointment-count">0</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Boş Saatler</h3>
+                    <div class="value warning" id="free-count">0</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Aktif Çalışanlar</h3>
+                    <div class="value" id="staff-count">4</div>
+                </div>
+            </div>
+
+            <!-- Filter -->
+            <div class="filter-section"><label for="admin-date">Tarih:</label><input type="date" id="admin-date"><button id="refresh-button">Yenile</button>
+                <label for="barber-filter">Berbere Göre Filtrele:</label>
+                <select id="barber-filter">
+                    <option value="all">Tümü</option>
+                    
+                    
+                    
+                    
+                </select>
+            </div>
+
+            <!-- Appointments Table -->
+            <div class="table-container">
+                <p class="mobile-table-hint">Tüm randevu detayları için tabloyu yana kaydırabilirsiniz.</p><table id="appointments-table">
+                    <thead>
+                        <tr>
+                            <th>Saat</th>
+                            <th>Müşteri</th>
+                            <th>Telefon</th>
+                            <th>Berber</th>
+                            <th>Hizmet / Tutar</th><th>Ödeme yöntemi</th><th>Durum</th>
+                            <th>İşlem</th>
+                        </tr>
+                    </thead>
+                    <tbody id="appointments-body">
+                        <!-- Filled by JS -->
+                    </tbody>
+                </table>
+            </div>
+</section><section id="staff-section" hidden><div class="section-heading"><div><h2>Ekibiniz</h2><p>Çalışanların adını, uzmanlığını ve görünürlüğünü düzenleyin.</p></div><button id="add-staff-button" type="button" class="save-button">＋ Çalışan ekle</button></div><div id="staff-list" class="staff-grid"></div><div id="add-staff-form" hidden></div></section><section id="settings-section" hidden><form id="business-form" class="editor-card"><h2>İşletme bilgileri</h2><p>Kaydettiğiniz bilgiler randevu sayfasında görünür.</p><label>Dükkan adı<input name="name" required minlength="2" maxlength="80"></label><label>İşletme açıklaması<textarea name="description" maxlength="300"></textarea></label><label>Telefon<input name="phone" type="tel" maxlength="30"></label><label>Adres<textarea name="address" maxlength="250"></textarea></label><button class="save-button" type="submit">Değişiklikleri kaydet</button><p class="save-feedback" role="status"></p></form><section class="editor-card" style="margin-top:24px;max-width:760px"><h2>Güvenlik ve yedekleme</h2><form id="server-password-form"><label>Mevcut şifre<input name="old" type="password" required autocomplete="current-password"></label><label>Yeni şifre (en az 12 karakter)<input name="new" type="password" required minlength="12" maxlength="256" autocomplete="new-password"></label><label>Yeni şifreyi tekrar girin<input name="confirm" type="password" required minlength="12" autocomplete="new-password"></label><button type="submit" class="save-button">Şifreyi değiştir</button><p id="password-feedback" role="status"></p></form><hr style="margin:24px 0;border:0;border-top:1px solid var(--atelier-line)"><p id="server-system-status" role="status">Sunucu durumu yükleniyor…</p><div class="form-actions"><button id="server-backup" type="button" class="save-button">Şimdi yedekle</button><a class="secondary-btn" href="/api/index.php?route=/admin/export" download>Kayıtları dışa aktar</a></div><p id="backup-feedback" role="status"></p></section><p class="storage-note">Randevular, çalışanlar ve işletme ayarları sunucunun ortak veritabanında saklanır. Bu panel yalnızca yönetici oturumuyla işlem yapar.</p></section></div>
+        </main>
+    </div>
+    
+    <script src="services.js?v=9"></script>
+    <script src="client.js?v=9"></script>
+    <script src="staff-editor.js?v=10"></script>
+    <script src="server-admin.js"></script>
+    <script src="admin.js"></script>
+</body>
+</html>
+
+
