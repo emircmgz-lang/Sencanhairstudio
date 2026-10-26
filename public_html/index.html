@@ -12,13 +12,28 @@
     <link rel="stylesheet" href="heritage.css?v=7">
     <link rel="stylesheet" href="services.css?v=10">
     <link rel="stylesheet" href="mobile-polish.css?v=12">
+    <link rel="stylesheet" href="employee-profiles.css?v=16">
+    <link rel="stylesheet" href="cinema.css?v=15">
+<link rel="stylesheet" href="footer.css?v=16">
 </head>
 <body class="customer-theme">
     <div class="app-container">
-        <header class="heritage-header"><div class="heritage-photo" aria-hidden="true"><img src="assets/barber-reference.jpg" alt="" width="720" height="1280" fetchpriority="high"></div><div class="theme-control" data-selected="dark"><span class="theme-label-light">Beyaz</span><button type="button" role="switch" aria-checked="true" aria-label="Siyah tema açık. Beyaz temaya geç." class="theme-switch" data-theme-switch><span class="theme-switch-thumb" aria-hidden="true"></span></button><span class="theme-label-dark">Siyah</span></div><div class="heritage-emblem" aria-hidden="true"><svg viewBox="0 0 260 80" fill="none"><path d="M15 40 Q60 2 102 34 M158 34 Q200 2 245 40 M15 40 Q60 78 102 46 M158 46 Q200 78 245 40 M32 33 Q20 22 13 30 Q3 40 20 42 M228 33 Q240 22 247 30 Q257 40 240 42" stroke="currentColor" stroke-width="1"/><circle cx="130" cy="40" r="28" stroke="currentColor"/><path d="M116 52l31-31 M119 24l27 30" stroke="currentColor" stroke-width="2"/><circle cx="113" cy="56" r="7" stroke="currentColor" stroke-width="2"/><circle cx="150" cy="58" r="7" stroke="currentColor" stroke-width="2"/><path d="M15 40h76m78 0h76" stroke="currentColor" stroke-width=".5"/></svg></div>
-            <div class="eyebrow">SAÇ · SAKAL · BAKIM</div>
-            <h1 class="heritage-title" data-shop-name>Davut Şencan <span>Hair Studio</span></h1><div class="heritage-rule" aria-hidden="true"><span>✦</span></div>
-            <p data-shop-description>Kendinize bir saat ayırın. Gerisini bize bırakın.</p>
+        <header class="cinema-header">
+          <div class="studio-ticker" aria-label="Şencan Hair Studio"><div class="studio-ticker-track" aria-hidden="true"><span>ŞENCAN HAIR STUDIO · ŞENCAN HAIR STUDIO · ŞENCAN HAIR STUDIO · </span><span>ŞENCAN HAIR STUDIO · ŞENCAN HAIR STUDIO · ŞENCAN HAIR STUDIO · </span></div></div>
+          <div class="cinema-stage">
+            <div class="cinema-backdrop" aria-hidden="true"></div>
+            <video id="studio-hero-video" class="cinema-video" autoplay muted loop playsinline preload="metadata" aria-hidden="true" hidden></video>
+            <div class="cinema-shade" aria-hidden="true"></div>
+            <div class="theme-control" data-selected="dark"><span class="theme-label-light">Beyaz</span><button type="button" role="switch" aria-checked="true" aria-label="Siyah tema açık. Beyaz temaya geç." class="theme-switch" data-theme-switch><span class="theme-switch-thumb" aria-hidden="true"></span></button><span class="theme-label-dark">Siyah</span></div>
+            <div class="cinema-content"><a class="cinema-kicker" href="hakkimizda.html" style="text-decoration:none">HAKKIMIZDA ↗</a>
+              <p class="cinema-brand" data-shop-name>Davut Şencan Hair Studio</p>
+              <h1 class="cinema-title" data-hero-title>TARZINIZI<br>YENİDEN<br>ŞEKİLLENDİRİYORUZ.</h1>
+              <p class="cinema-description" data-hero-description>Kendinize bir saat ayırın. Gerisini bize bırakın.</p>
+              <button type="button" class="cinema-book" id="hero-book">Randevu al & ekibimizle tanış <span aria-hidden="true">↗</span></button>
+            </div>
+            <button type="button" class="cinema-motion" id="hero-motion" aria-pressed="false">Hareketi durdur Ⅱ</button>
+            <span class="cinema-scroll" aria-hidden="true">USTANIZI KEŞFEDİN ↓</span>
+          </div>
         </header>
 
         <nav class="customer-nav" aria-label="Randevu işlemleri"><button type="button" id="show-booking" class="active">Randevu al</button><button type="button" id="show-lookup">Randevumu sorgula</button><a class="customer-contact-link" href="#business-contact">Bize ulaşın</a></nav>
@@ -78,14 +93,17 @@
             </section>
         </main><section id="lookup-section" class="lookup-section" hidden><div class="eyebrow">RANDEVUNUZ KONTROLÜNÜZDE</div><h2>Randevunuzu sorgulayın</h2><p>Telefon numaranız ve randevu kodunuzla detayları görün.</p><form id="lookup-form"><div class="input-group"><label for="lookup-phone">Telefon numarası</label><input id="lookup-phone" type="tel" required autocomplete="tel" placeholder="05XX XXX XX XX"></div><div class="input-group"><label for="lookup-code">Randevu kodu</label><input type="text" id="lookup-code" required maxlength="64" autocomplete="off" placeholder="Örn: A3F91B72C0" autocapitalize="characters"></div><button type="submit" class="primary-btn">Randevuyu bul</button></form><p id="lookup-message" role="status" aria-live="polite"></p><div id="lookup-result" aria-live="polite"></div></section>
         <section id="business-contact" class="business-contact" aria-label="İşletme adres ve iletişim bilgileri"><p class="contact-eyebrow" data-shop-name>Davut Şencan Hair Studio</p><h2>Bize ulaşın</h2><p data-business-empty>Adres ve iletişim bilgileri yakında paylaşılacak.</p><address data-business-address></address><p data-business-phone></p><div class="business-contact-actions"><a data-business-maps target="_blank" rel="noopener noreferrer">Yol tarifi al ↗</a><a data-business-call>İşletmeyi ara</a></div></section>
-        <footer class="studio-footer"><span data-shop-name>Davut Şencan Hair Studio</span><span>Size uygun saatte, koltuğunuz hazır.</span></footer>
+        
     </div>
 
+<footer class="site-footer"><div class="footer-grid"><section class="footer-brand"><a class="footer-monogram" href="index.html" aria-label="Şencan Hair Studio ana sayfa">Ş<span>HS</span></a><h2 data-shop-name>Davut Şencan Hair Studio</h2><p >Saç, sakal ve bakımda özenli dokunuşlar. Tarzınıza uygun hizmet için ekibimizle tanışın.</p></section><nav aria-label="Hızlı bağlantılar"><h2>Hızlı bağlantılar</h2><a href="index.html">Ana sayfa</a><a href="hakkimizda.html">Hakkımızda</a><a href="index.html#booking-flow" data-footer-booking>Randevu al</a><a href="index.html#business-contact">İletişim</a></nav><nav aria-label="Politikalar"><h2>Politikalar</h2><a href="cerez-politikasi.html">Çerez Politikası</a><a href="gizlilik-politikasi.html">Gizlilik ve KVKK</a><a href="kullanim-sartlari.html">Kullanım Şartları</a></nav><section class="footer-contact"><h2>İletişim</h2><a href="mailto:info@sencanhairstudio.com">info@sencanhairstudio.com</a><a data-footer-phone hidden></a><p data-footer-address hidden></p><a class="footer-contact-button" href="index.html#business-contact">Bize ulaşın ↗</a></section></div><div class="footer-bottom"><span>SAÇ · SAKAL · BAKIM</span><p>© 2026 <span data-shop-name>Davut Şencan Hair Studio</span>. Tüm hakları saklıdır.</p></div></footer>
     <script src="business-contact.js?v=12"></script>
     <script src="services.js?v=9"></script>
-    <script src="client.js?v=11"></script>
+    <script src="client.js?v=20"></script>
     <script src="service-picker.js?v=9"></script>
-    <script src="app.js?v=10"></script>
+    <script src="app.js?v=13"></script>
+    <script src="studio-media.js?v=20"></script>
+<script src="footer.js?v=20"></script>
 </body>
 </html>
 

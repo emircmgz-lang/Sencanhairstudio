@@ -18,7 +18,7 @@ flock -n 9 || { echo 'Another deployment is running.' >&2; exit 1; }
 mkdir -p -- "$target/htdocs" "$target/private"
 [[ ! -L "$target/htdocs" && ! -L "$target/private" ]] || { echo 'Target directories must not be symlinks.' >&2; exit 1; }
 # No --delete: preserve server config, backups, uploads and runtime state.
-rsync -rt --chmod=D750,F640 --exclude=config.php --exclude=backups/ --exclude=cron-status.json --exclude=.cron.lock -- "$repo/private/" "$target/private/"
+rsync -rt --chmod=D750,F640 --exclude=config.php --exclude=backups/ --exclude=media/ --exclude=cron-status.json --exclude=.cron.lock -- "$repo/private/" "$target/private/"
 public_options=(--exclude=setup.php)
 if [[ ${2:-} == --include-setup ]]; then public_options=(); fi
 rsync -rt --chmod=D755,F644 "${public_options[@]}" -- "$repo/public_html/" "$target/htdocs/"

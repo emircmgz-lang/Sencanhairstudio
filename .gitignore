@@ -5,3 +5,5 @@ private/.cron.lock
 *.log
 .env
 .DS_Store
+
+private/media/

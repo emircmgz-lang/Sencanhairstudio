@@ -1,0 +1,29 @@
+html[data-theme] .customer-theme header.cinema-header{padding:0;background:#111;color:#fff;text-align:center;overflow:hidden;position:relative}
+html[data-theme] .customer-theme header.cinema-header:after{display:none}
+.studio-ticker{height:44px;background:#1e1e1c;color:#f7f4ec;overflow:hidden;display:flex;align-items:center;border-bottom:1px solid #ffffff22}
+.studio-ticker-track{display:flex;width:max-content;animation:studio-marquee 28s linear infinite;will-change:transform;font-family:Arial,sans-serif;font-size:15px;line-height:1;font-weight:800;letter-spacing:.04em}
+.studio-ticker-track span{flex:none;white-space:nowrap}
+@keyframes studio-marquee{to{transform:translateX(-50%)}}
+.cinema-stage{position:relative;isolation:isolate;min-height:690px;min-height:min(840px,calc(100svh - 44px));display:flex;align-items:center;justify-content:center;padding:100px 36px 110px;overflow:hidden;background:#141410}
+.cinema-backdrop,.cinema-video,.cinema-shade{position:absolute;inset:0;width:100%;height:100%;z-index:-3}
+.cinema-backdrop{background:#171713 url('assets/barber-reference.jpg') center top/cover no-repeat;filter:grayscale(.6)}
+.cinema-video{object-fit:cover;object-position:center;z-index:-2}
+.cinema-video[hidden]{display:none}
+.cinema-shade{background:linear-gradient(180deg,#0007,#0007 35%,#000b);z-index:-1}
+html[data-theme] .customer-theme header.cinema-header .theme-control{position:absolute;top:20px;right:20px;background:#10100dc9;color:#eee8d9;border-color:#ffffff44;z-index:2}
+.cinema-content{width:100%;max-width:660px;display:flex;align-items:center;flex-direction:column;gap:24px}
+.cinema-kicker{color:#e1cfaa;font-size:10px;letter-spacing:.32em;font-weight:600}
+html[data-theme] .customer-theme header.cinema-header .cinema-brand{font-family:Georgia,serif;color:#f3e5c4;font-size:clamp(19px,4vw,28px);font-style:normal;letter-spacing:.02em;margin:0;padding:0;max-width:none;line-height:1.3}
+html[data-theme] .customer-theme header.cinema-header .cinema-title{font-family:Arial,Helvetica,sans-serif;font-weight:900;font-size:clamp(30px,6.7vw,64px);color:#fff;line-height:1.04;letter-spacing:-.045em;margin:0;max-width:100%;overflow-wrap:normal;text-shadow:0 2px 24px #0005}
+html[data-theme] .customer-theme header.cinema-header .cinema-description{font-family:Arial,Helvetica,sans-serif;font-style:normal;font-size:17px;line-height:1.65;color:#efefec;max-width:510px;margin:0;padding:0;white-space:pre-wrap}
+html[data-theme] .customer-theme .cinema-book{display:flex;align-items:center;justify-content:center;gap:22px;border:1px solid #d7c597;background:#d0bd92;color:#15140f;border-radius:13px;min-height:58px;padding:18px 26px;font-size:14px;font-weight:700;cursor:pointer;margin-top:8px;box-shadow:0 8px 28px #0004}
+.cinema-book span{font-size:22px}.cinema-book:hover{filter:brightness(1.09)}
+html[data-theme] .customer-theme .cinema-motion{position:absolute;bottom:22px;right:20px;background:#12120ebf;border:1px solid #ffffff50;color:#fff;border-radius:30px;padding:10px 14px;font-size:11px;min-height:40px;cursor:pointer}
+.cinema-scroll{position:absolute;bottom:37px;left:25px;font-size:8px;letter-spacing:.17em;color:#ded6c3}
+.cinema-header.motion-paused .studio-ticker-track{animation-play-state:paused}
+.cinema-header button:focus-visible{outline:2px solid #fff;outline-offset:4px}
+@media(max-width:480px){.cinema-stage{padding:100px 20px 95px;min-height:680px}.cinema-content{gap:21px}html[data-theme] .customer-theme header.cinema-header .cinema-title{font-size:clamp(19px,5.8vw,28px)}html[data-theme] .customer-theme header.cinema-header .cinema-description{font-size:14px}.studio-ticker{height:38px}.studio-ticker-track{font-size:13px}.cinema-scroll{left:20px;font-size:7px}.cinema-book{max-width:100%}}
+@media(prefers-reduced-motion:reduce){.studio-ticker-track{animation-play-state:paused}}
+
+html[data-theme] .customer-theme header.cinema-header .cinema-title{white-space:pre-line;overflow-wrap:anywhere}
+html[data-theme] .customer-theme header.cinema-header .cinema-description{font-weight:400;white-space:pre-wrap}

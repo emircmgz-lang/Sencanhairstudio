@@ -1,3 +1,7 @@
+# Güncel birleşik sürüm
+
+Son tasarım ve mail aynı pakettedir. Önce [GUNCELLEME-ONCE-OKU.md](GUNCELLEME-ONCE-OKU.md) dosyasını okuyun. Mevcut kurulumda veritabanı yeniden kurulmaz; gerçek config.php korunur.
+
 # Davut Şencan Hair Studio — PHP + MySQL
 
 Hostinger gibi PHP hostingleri için derlemesiz sürüm. Node.js, npm veya Composer gerekmez. Gereksinimler: PHP 8.2+, PDO MySQL, mbstring, MySQL/MariaDB ve InnoDB. E-posta daha sonra açılacaksa cURL gerekir. PHP 8.3 ve MariaDB 11.4 üzerinde test edilmiştir; gerçek Hostinger hesabında henüz kurulum yapılmadı.
