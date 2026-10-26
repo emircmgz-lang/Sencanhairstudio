@@ -1,6 +1,6 @@
 const defaultSchedule=()=>Array.from({length:7},()=>({enabled:true,start:'09:00',end:'22:00',breakEnabled:false,breakStart:'',breakEnd:''}));
 const defaultBarbers=['Kadircan','Davut','Alperen','Enescan'].map((name,i)=>({id:i+1,name,initials:name[0],specialty:'Saç kesimi & bakım',active:true}));
-function fullBarber(b){return {photo:'',phone:'',instagram:'',bio:'',duration:60,schedule:defaultSchedule(),daysOff:[],...b}}
+function fullBarber(b){return {photo:'',phone:'',email:'',instagram:'',bio:'',duration:60,schedule:defaultSchedule(),daysOff:[],...b}}
 
 function applyBrand(business){document.querySelectorAll('[data-shop-name]').forEach(el=>el.textContent=el.classList.contains('heritage-title')?business.name.replace(/\s+(Hair\s*Studio)$/i,'\n$1'):business.name);document.querySelectorAll('[data-shop-description]').forEach(el=>el.textContent=business.description);document.querySelectorAll('[data-shop-contact]').forEach(el=>el.textContent=[business.phone,business.address].filter(Boolean).join(' · '));if(typeof StudioContact!=='undefined')StudioContact.render(business);document.title=business.name+(document.getElementById('admin-content')?' | Yönetim Paneli':' | Randevu')}
 

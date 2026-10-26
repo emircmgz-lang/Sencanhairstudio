@@ -12,11 +12,12 @@ function sc_future(string $date,string $time): bool { return (new DateTimeImmuta
 function sc_phone(mixed $value): string { $s=preg_replace('/[\s()+-]/','',(string)$value);return str_starts_with($s,'90')?'0'.substr($s,2):$s; }
 function sc_uuid(): string { $b=random_bytes(16);$b[6]=chr((ord($b[6])&0x0f)|0x40);$b[8]=chr((ord($b[8])&0x3f)|0x80);$x=bin2hex($b);return substr($x,0,8).'-'.substr($x,8,4).'-'.substr($x,12,4).'-'.substr($x,16,4).'-'.substr($x,20); }
 function sc_schedule(): array { return array_fill(0,7,['enabled'=>true,'start'=>'09:00','end'=>'22:00','breakEnabled'=>false,'breakStart'=>'','breakEnd'=>'']); }
-function sc_full_barber(array $b): array { return array_replace(['photo'=>'','phone'=>'','instagram'=>'','bio'=>'','duration'=>60,'schedule'=>sc_schedule(),'daysOff'=>[],'active'=>true,'archived'=>false],$b); }
+function sc_full_barber(array $b): array { return array_replace(['photo'=>'','phone'=>'','instagram'=>'','email'=>'','bio'=>'','duration'=>60,'schedule'=>sc_schedule(),'daysOff'=>[],'active'=>true,'archived'=>false],$b); }
 function sc_initial_business(): array { $barbers=[];foreach(['Kadircan','Davut','Alperen','Enescan'] as $i=>$name)$barbers[]=sc_full_barber(['id'=>$i+1,'name'=>$name,'initials'=>substr($name,0,1),'specialty'=>'Saç kesimi & bakım']);$barbers[0]['schedule'][1]['start']='18:00';$barbers[3]['schedule'][2]['start']='18:00';return ['name'=>'Davut Şencan Hair Studio','description'=>'Kendinize bir saat ayırın. Gerisini bize bırakın.','phone'=>'','address'=>'','barbers'=>$barbers,'scheduleRevision'=>1,'brandNameRevision'=>1]; }
 function sc_barber(array $input,array $previous=[]): array {
- $b=sc_full_barber(array_replace($previous,$input));foreach(['name','specialty','bio','phone','instagram'] as $k){if(!is_string($b[$k]))sc_fail(400,'Çalışan bilgileri geçersiz.');$b[$k]=trim($b[$k]);}
+ $b=sc_full_barber(array_replace($previous,$input));foreach(['name','specialty','bio','phone','instagram','email'] as $k){if(!is_string($b[$k]))sc_fail(400,'Çalışan bilgileri geçersiz.');$b[$k]=trim($b[$k]);}
  if(mb_strlen($b['name'])<2||mb_strlen($b['name'])>80||mb_strlen($b['specialty'])>200||mb_strlen($b['bio'])>600||strlen($b['phone'])>30||strlen($b['instagram'])>60)sc_fail(400,'Çalışan adı veya açıklamalar çok uzun / eksik.');
+ if(strlen($b['email'])>254||($b['email']!==''&&!filter_var($b['email'],FILTER_VALIDATE_EMAIL)))sc_fail(400,'Geçerli bir çalışan e-posta adresi girin.');
  $b['instagram']=ltrim($b['instagram'],'@');$b['duration']=(int)$b['duration'];if(!in_array($b['duration'],[15,30,45,60,90,120],true))sc_fail(400,'Randevu süresi geçersiz.');
  if(!is_string($b['photo'])||strlen($b['photo'])>400000||($b['photo']!==''&&!preg_match('~^data:image/(jpeg|png|webp);base64,[A-Za-z0-9+/=]+$~D',$b['photo'])))sc_fail(400,'Küçük bir JPG, PNG veya WebP fotoğrafı seçin.');
  if(!is_array($b['schedule'])||!array_is_list($b['schedule'])||count($b['schedule'])!==7)sc_fail(400,'7 günlük çalışma saati gerekli.');
@@ -31,3 +32,5 @@ function sc_slots(?array $b,string $date,array $records): array {
  $i=(int)(new DateTimeImmutable($date))->format('N')-1;$s=$b['schedule'][$i];if(empty($s['enabled']))return [];$start=sc_minutes($s['start']);$end=sc_minutes($s['end']);$duration=$b['duration'];$bs=!empty($s['breakEnabled'])?sc_minutes($s['breakStart']):null;$be=!empty($s['breakEnabled'])?sc_minutes($s['breakEnd']):null;$ranges=$bs!==null?[[$start,$bs],[$be,$end]]:[[$start,$end]];$result=[];
  foreach($ranges as [$from,$to])for($n=$from;$n+$duration<=$to;$n+=$duration){$clock=sc_clock($n);$available=sc_future($date,$clock);if($available)foreach($records as $a)if($a['barberId']===$b['id']&&$a['date']===$date&&$a['status']!=='cancelled'&&sc_minutes($a['time'])<$n+$duration&&sc_minutes($a['time'])+($a['duration']??60)>$n){$available=false;break;}$result[]=['time'=>$clock,'duration'=>$duration,'available'=>$available];}return $result;
 }
+
+function sc_public_barbers(array $barbers): array { return array_map(function($b){unset($b['email']);return $b;},$barbers); }

@@ -14,6 +14,8 @@ return [
     'backup_keep_days' => 30,
     'mail_enabled' => false,
     'resend_api_key' => '',
-    'mail_from' => '',
+    'mail_from' => 'Davut Şencan Hair Studio <info@sencanhairstudio.com>',
+    // Alıcılar yönetici panelinde her çalışanın email alanından alınır.
+    // mail_to eski sürümler içindir; bu sürümde kullanılmaz.
     'mail_to' => [],
 ];

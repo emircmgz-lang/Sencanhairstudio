@@ -29,6 +29,10 @@ domain-klasoru/
 
 `private` klasörü **public_html içine konmaz**. İkisi aynı seviyede olmalıdır. Bu yerleşim veritabanı parolaları ve yedeklerin doğrudan indirilmesini önler. Dosya erişim izinlerini hosting kullanıcısına göre ayarlayın; genel 777 izni vermeyin.
 
+## Sabit htdocs ve Git güncellemeleri
+
+Document Root sabit `htdocs` ise [otomatik yayınlama yönergesini](deploy/HTDOCS-KURULUM.md) kullanın. `deploy/publish.sh` her Git çekiminden sonra site dosyalarını aktarır; sunucuya özel ayarları korur.
+
 ## Kurulum
 
 1. Mevcut site ve varsa gerçek veritabanını yedekleyin. Paket eski Node/SQLite kayıtlarını kendiliğinden taşımaz.
@@ -85,3 +89,7 @@ Canlı ChatGPT Sites demosundaki veriler o cihazın tarayıcısındadır; bu PHP
 ## Kontroller
 
 `tests/` altındaki testler PHP 8.3 ve MariaDB 11.4 konteynerlerinde gerçek HTTP istekleriyle çalıştırıldı. Aynı saat, şifre, sorgu, iptal, saat değişimi, fotoğraf, fiyatlar, veritabanı kalıcılığı, SQL yedeği ve geri yükleme kontrol edildi. Gerçek mail gönderilmedi. Apache/LiteSpeed yapılandırması ve gerçek Hostinger hesabı burada doğrulanmadı; canlı kurulumdan sonra ayrıca kontrol edilmelidir.
+
+## Çalışana özel e-posta
+
+Güncel kurulum ve kullanım: [MAIL-GUNCELLEME.md](MAIL-GUNCELLEME.md). Alıcı adresleri admin panelinden düzenlenir; mail_to kullanılmaz. Müşteri hatırlatması yoktur.
