@@ -1,0 +1,1 @@
+Mevcut public_html/client.js ve public_html/setup.php kod dosyalarını güncelleyin. config.php veya veritabanını değiştirmeyin. Kurulum zaten yapıldıysa setup.php tekrar çalıştırılmaz; gerekirse silinir. Hosting Git çekip yayınlamalıdır. Ardından sayfayı önbelleksiz yenileyin. Bu düzeltme, kök veya /public_html altındaki gerçek API yolunu otomatik bulur.
