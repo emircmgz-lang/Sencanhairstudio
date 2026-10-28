@@ -13,7 +13,15 @@ return [
     'install_token' => '',
     'backup_keep_days' => 30,
     'mail_enabled' => false,
-    'resend_api_key' => '',
+    // Eski gerçek config.php içinde bu alanlar yoksa da aynı SMTP varsayılanları kullanılır.
+    'mail_transport' => 'smtp',
+    'smtp_host' => 'mail.sencanhairstudio.com',
+    'smtp_port' => 25,
+    'smtp_security' => 'none',
+    // Kimlik doğrulama yok; kullanıcı adı ve parola eklemeyin.
+    'smtp_username' => '',
+    'smtp_password' => '',
+    'resend_api_key' => '', // Yalnız mail_transport=resend seçilirse kullanılır.
     'mail_from' => 'Davut Şencan Hair Studio <info@sencanhairstudio.com>',
     // Alıcılar yönetici panelinde her çalışanın email alanından alınır.
     // mail_to eski sürümler içindir; bu sürümde kullanılmaz.
