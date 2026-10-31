@@ -12,11 +12,12 @@ function sc_mail_recipient(array $business,int $barberId): ?string { $b=sc_find_
 function sc_mail_payload(array $c,array $a,array $business): array { $recipient=sc_mail_recipient($business,(int)$a['barberId']);if($recipient===null)throw new RuntimeException('Çalışan e-posta adresi tanımlı değil.');$b=sc_find_barber($business,$a['barberId']);$text=implode("\n",[$business['name'],'Yeni randevu kaydedildi.','Müşteri: '.$a['name'],'Telefon: '.$a['phone'],'Çalışan: '.($b['name']??'Çalışan'),'Tarih: '.$a['date'],'Saat: '.$a['time'].' (Türkiye saati)','Hizmetler: '.implode(' + ',array_column($a['services'],'name')),'Tutar: '.$a['total'].' TL'.($a['priceFrom']?' ve üzeri':''),'Randevu kodu: '.$a['code']]);return ['from'=>$c['mail_from'],'to'=>[$recipient],'subject'=>$business['name'].' · Yeni randevu · '.$a['code'],'text'=>$text]; }
 function sc_send_mail(array $c,array $a,array $business,string $jobId): void { $payload=sc_mail_payload($c,$a,$business);if(sc_mail_transport($c)==='smtp'){sc_send_smtp($c,$payload,$jobId);return;}if(sc_mail_transport($c)!=='resend')throw new ScMailError('Gönderim yöntemi geçersiz.');$ch=curl_init('https://api.resend.com/emails');curl_setopt_array($ch,[CURLOPT_POST=>true,CURLOPT_RETURNTRANSFER=>true,CURLOPT_TIMEOUT=>15,CURLOPT_HTTPHEADER=>['Content-Type: application/json','Authorization: Bearer '.$c['resend_api_key'],'Idempotency-Key: booking-'.$jobId],CURLOPT_POSTFIELDS=>json_encode($payload,JSON_THROW_ON_ERROR)]);curl_exec($ch);$status=curl_getinfo($ch,CURLINFO_RESPONSE_CODE);$err=curl_errno($ch);curl_close($ch);if($err||$status<200||$status>=300)throw new RuntimeException('Gönderim hizmeti isteği tamamlanamadı.'); }
 function sc_booking_started(array $row): bool { $now=new DateTimeImmutable('now',new DateTimeZone('Europe/Istanbul'));$today=$now->format('Y-m-d');return $row['date']<$today||($row['date']===$today&&(int)$row['start']<=((int)$now->format('H')*60+(int)$now->format('i'))); }
-function sc_drain_mail(PDO $db,array $c,int $limit=10): array {
+function sc_drain_mail(PDO $db,array $c,int $limit=10,?string $bookingId=null): array {
  $result=['processed'=>0,'accepted'=>0,'skipped'=>0,'errors'=>0,'lastError'=>null];
  if(!sc_mail_ready($c))return $result;
  $limit=max(1,min(10,$limit));
- $jobs=sc_query($db,"SELECT * FROM sc_email_outbox WHERE status='pending' AND next_attempt<=? ORDER BY created_at LIMIT ".$limit,[sc_ms()])->fetchAll();
+ $params=[sc_ms()];$filter='';if($bookingId!==null){$filter=' AND booking_id=?';$params[]=$bookingId;}
+ $jobs=sc_query($db,"SELECT * FROM sc_email_outbox WHERE status='pending' AND next_attempt<=?".$filter." ORDER BY created_at LIMIT ".$limit,$params)->fetchAll();
  foreach($jobs as $job){
   $result['processed']++;
   $row=sc_query($db,'SELECT * FROM sc_appointments WHERE id=?',[$job['booking_id']])->fetch();
@@ -41,4 +42,25 @@ function sc_manual_mail_run(PDO $db,array $c): array {
   // One job per click limits HTTP runtime. Uses the same lock as cron.php.
   $result=sc_drain_mail($db,$c,1);sc_audit($db,'manual_mail_run');return $result;
  }finally{flock($lock,LOCK_UN);fclose($lock);}
+}
+
+function sc_auto_mail_run(PDO $db,array $c,string $bookingId): void {
+ if(!sc_mail_ready($c)||(sc_business($db)['autoMail']??true)!==true)return;
+ $lock=@fopen(__DIR__.'/.cron.lock','c');if(!$lock){error_log('Sencan otomatik mail kilidi acilamadi; bildirim kuyrukta kaldi.');return;}
+ try{
+  $until=microtime(true)+10;$locked=false;
+  do{if(flock($lock,LOCK_EX|LOCK_NB)){$locked=true;break;}usleep(100000);}while(microtime(true)<$until);
+  if(!$locked){error_log('Sencan otomatik mail kuyrugu mesgul; bildirim kuyrukta kaldi.');return;}
+  sc_drain_mail($db,$c,1,$bookingId);sc_audit($db,'auto_mail_run',$bookingId);
+ }finally{flock($lock,LOCK_UN);fclose($lock);}
+}
+function sc_booking_response(PDO $db,array $c,array $result): never {
+ $status=$result['replayed']?200:201;$booking=$result['booking'];
+ if($result['replayed']||!sc_mail_ready($c)||(sc_business($db)['autoMail']??true)!==true)sc_json($status,$booking);
+ // Commit already completed. FPM flushes the booking response before attempting SMTP.
+ $json=json_encode($booking,JSON_UNESCAPED_UNICODE|JSON_INVALID_UTF8_SUBSTITUTE|JSON_THROW_ON_ERROR);
+ http_response_code($status);echo $json;ignore_user_abort(true);
+ if(function_exists('fastcgi_finish_request'))fastcgi_finish_request();else{while(ob_get_level()>0){if(!@ob_end_flush())break;}flush();}
+ try{sc_auto_mail_run($db,$c,$booking['id']);}catch(Throwable){error_log('Sencan otomatik mail denemesi tamamlanamadi; bildirim kuyrukta kaldi.');}
+ exit;
 }
