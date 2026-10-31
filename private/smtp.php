@@ -62,7 +62,7 @@ function sc_smtp_reply($socket,array $expected,string $stage): int {
         if($line===false){$meta=stream_get_meta_data($socket);throw new ScMailError($meta['timed_out']?'SMTP '.$stage.' yanıtı zaman aşımına uğradı.':'SMTP '.$stage.' sırasında bağlantı kesildi.');}
         if(!preg_match('/^(\d{3})([ -])[^\r\n]*\r?\n$/D',$line,$m))throw new ScMailError('SMTP '.$stage.' yanıtı geçersiz.');
         $lineCode=(int)$m[1];if($code!==null&&$code!==$lineCode)throw new ScMailError('SMTP '.$stage.' çok satırlı yanıtı geçersiz.');$code=$lineCode;
-        if($m[2]===' '){if(!in_array($code,$expected,true))throw new ScMailError('SMTP '.$stage.' reddedildi ('.$code.').');return $code;}
+        if($m[2]===' '){if(!in_array($code,$expected,true)){$detail=trim(preg_replace('/[\x00-\x1F\x7F]+/',' ',substr($line,4)));if(!mb_check_encoding($detail,'UTF-8'))$detail=mb_convert_encoding($detail,'UTF-8','UTF-8');throw new ScMailError(mb_substr('SMTP '.$stage.' reddedildi ('.$code.'): '.$detail,0,240,'UTF-8'));}return $code;}
     }
     throw new ScMailError('SMTP '.$stage.' yanıtı çok uzun.');
 }
