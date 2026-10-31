@@ -91,13 +91,34 @@ function sc_smtp_auth($socket,array $settings,array $capabilities): void {
         if(sc_smtp_reply($socket,[235,334],'AUTH PLAIN',$capture,true)===334){sc_smtp_write($socket,$encoded."\r\n");sc_smtp_reply($socket,[235],'AUTH PLAIN',$capture,true);}
     }else throw new ScMailError('SMTP sunucusu desteklenen LOGIN/PLAIN kimlik doğrulamasını sunmuyor.');
 }
+function sc_smtp_connection_error(array $settings,int $errno,string $error,array $warnings): string {
+    $details=implode(' ', $warnings).' '.$error;
+    $address=$settings['host'].':'.$settings['port'];
+    if(stripos($details,'did not match expected')!==false||stripos($details,'peer name')!==false){
+        $detail='Sertifika adı sunucuyla uyuşmuyor.';
+        foreach($warnings as $warning)if(stripos($warning,'did not match expected')!==false){$detail=preg_replace('/^.*?Peer certificate/','Peer certificate',$warning);break;}
+        $message='SMTP '.$address.': '.$detail;
+    }elseif(stripos($details,'certificate verify failed')!==false||stripos($details,'self-signed certificate')!==false){
+        $message='SMTP '.$address.': TLS sertifikası doğrulanamadı. Sertifika zincirini ve doğru mail sunucusu adını kontrol edin.';
+    }elseif($errno===111||stripos($details,'Connection refused')!==false){
+        $message='SMTP '.$address.': Bağlantı reddedildi (111). Bu adreste/portta erişilebilir SMTP hizmeti yok veya bağlantı engelleniyor.';
+    }elseif($errno===110||stripos($details,'timed out')!==false){
+        $message='SMTP '.$address.': Bağlantı zaman aşımına uğradı. Port erişimini kontrol edin.';
+    }elseif(stripos($details,'getaddrinfo')!==false||stripos($details,'php_network_getaddresses')!==false){
+        $message='SMTP '.$address.': Sunucu adı DNS üzerinden çözümlenemedi.';
+    }else{
+        $message='SMTP '.$address.': Bağlantı/TLS kurulamadı (kod '.$errno.'). Port ve şifreleme türünü sunucunun ayarlarıyla doğrulayın.';
+    }
+    return mb_substr(preg_replace('/[\x00-\x1F\x7F]+/',' ',$message),0,240,'UTF-8');
+}
 function sc_send_smtp(array $c,array $payload,string $jobId): void {
     $settings=sc_smtp_settings($c);$message=sc_smtp_message($payload,$jobId);
     $crypto=STREAM_CRYPTO_METHOD_TLSv1_2_CLIENT|(defined('STREAM_CRYPTO_METHOD_TLSv1_3_CLIENT')?STREAM_CRYPTO_METHOD_TLSv1_3_CLIENT:0);
     $context=stream_context_create(['ssl'=>['verify_peer'=>true,'verify_peer_name'=>true,'allow_self_signed'=>false,'peer_name'=>$settings['host'],'SNI_enabled'=>true,'crypto_method'=>$crypto]]);
     $scheme=$settings['security']==='ssl'?'tls':'tcp';
-    $socket=@stream_socket_client($scheme.'://'.$settings['host'].':'.$settings['port'],$errno,$error,10,STREAM_CLIENT_CONNECT,$context);
-    if($socket===false)throw new ScMailError($settings['security']==='ssl'?'SMTP SSL/TLS bağlantısı kurulamadı. Sunucu adı, port ve sertifikayı kontrol edin.':'SMTP bağlantısı açılamadı ('.(int)$errno.').');
+    $warnings=[];set_error_handler(function($severity,$message)use(&$warnings){$warnings[]=$message;return true;});
+    try{$socket=stream_socket_client($scheme.'://'.$settings['host'].':'.$settings['port'],$errno,$error,10,STREAM_CLIENT_CONNECT,$context);}finally{restore_error_handler();}
+    if($socket===false)throw new ScMailError(sc_smtp_connection_error($settings,(int)$errno,(string)$error,$warnings));
     stream_set_timeout($socket,10);
     try{
         sc_smtp_reply($socket,[220],'karşılama');$capabilities=sc_smtp_ehlo($socket,$settings);
