@@ -1,0 +1,23 @@
+.reviews-section{padding:10px 38px 40px;scroll-margin-top:24px}
+.reviews-section .eyebrow{text-align:center;font-size:9px;letter-spacing:.2em;color:var(--atelier-gold,#78643c);margin-bottom:10px}
+.reviews-section h2{text-align:center;margin-bottom:8px}
+.reviews-summary{text-align:center;font-size:12px;color:var(--atelier-muted,#84765f);margin:0 0 22px}
+.review-stars{letter-spacing:.12em;color:var(--atelier-gold,#78643c);white-space:nowrap}
+.review-stars .off{opacity:.28}
+.review-card{border:1px solid var(--atelier-line,#c8b997);background:var(--atelier-panel,#f8f4e9);border-radius:18px;padding:18px 20px;margin:0 0 14px;min-width:0}
+.review-card header{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap;margin:0 0 8px;padding:0;background:none}
+.review-card strong{color:var(--atelier-ink,#302b21);font-size:14px;overflow-wrap:anywhere}
+.review-card time{font-size:11px;color:var(--atelier-muted,#84765f)}
+.review-card p{margin:8px 0 0;font-size:13px;line-height:1.75;color:var(--atelier-ink,#302b21);white-space:pre-wrap;overflow-wrap:anywhere}
+.review-empty{text-align:center;font-size:12px;color:var(--atelier-muted,#84765f)}
+.review-compose{border:1px solid var(--atelier-gold,#78643c);border-radius:20px;padding:22px;margin:0 0 24px;background:var(--atelier-soft,#e9e0cb)}
+.review-compose h3{margin:0 0 4px;font:22px Georgia,serif;color:var(--atelier-gold,#78643c);text-align:center}
+.review-compose .review-for{font-size:12px;text-align:center;color:var(--atelier-muted,#84765f);margin:0 0 16px}
+.star-input{display:flex;justify-content:center;gap:6px;margin:0 0 16px}
+.star-input button{border:0;background:none;font-size:34px;line-height:1;padding:4px 6px;cursor:pointer;color:var(--atelier-muted,#84765f);opacity:.45;min-width:44px;min-height:44px}
+.star-input button.on{color:var(--atelier-gold,#78643c);opacity:1}
+.review-compose textarea{width:100%;box-sizing:border-box;min-height:110px;padding:14px 16px;font-size:15px;border-radius:16px;background:var(--atelier-field,#fffefa);border:1px solid var(--atelier-line,#c8b997);color:var(--atelier-ink,#302b21);resize:vertical}
+.review-compose .review-count{font-size:11px;text-align:right;color:var(--atelier-muted,#84765f);margin:6px 2px 14px}
+.review-compose .primary-btn{width:100%}
+#review-message{font-size:12px;text-align:center;margin:12px 0 0;min-height:1.2em;color:var(--atelier-gold,#78643c)}
+@media(max-width:560px){.reviews-section{padding:10px 22px 32px}.review-card{padding:16px}}

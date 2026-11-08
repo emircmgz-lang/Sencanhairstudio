@@ -15,6 +15,7 @@
     <link rel="stylesheet" href="employee-profiles.css?v=16">
     <link rel="stylesheet" href="cinema.css?v=15">
 <link rel="stylesheet" href="footer.css?v=16">
+<link rel="stylesheet" href="reviews.css?v=1">
 </head>
 <body class="customer-theme">
     <div class="app-container">
@@ -36,7 +37,7 @@
           </div>
         </header>
 
-        <nav class="customer-nav" aria-label="Randevu işlemleri"><button type="button" id="show-booking" class="active">Randevu al</button><button type="button" id="show-lookup">Randevumu sorgula</button><a class="customer-contact-link" href="#business-contact">Bize ulaşın</a></nav>
+        <nav class="customer-nav" aria-label="Randevu işlemleri"><button type="button" id="show-booking" class="active">Randevu al</button><button type="button" id="show-lookup">Randevumu sorgula</button><a class="customer-contact-link" href="#reviews">Yorumlar</a><a class="customer-contact-link" href="#business-contact">Bize ulaşın</a></nav>
         <p id="message" role="status" aria-live="polite"></p>
         <main id="booking-flow">
             <!-- Step 1: Select Barber -->
@@ -92,17 +93,22 @@
                 <button class="secondary-btn" onclick="resetFlow()">Yeni Randevu Al</button>
             </section>
         </main><section id="lookup-section" class="lookup-section" hidden><div class="eyebrow">RANDEVUNUZ KONTROLÜNÜZDE</div><h2>Randevunuzu sorgulayın</h2><p>Telefon numaranız ve randevu kodunuzla detayları görün.</p><form id="lookup-form"><div class="input-group"><label for="lookup-phone">Telefon numarası</label><input id="lookup-phone" type="tel" required autocomplete="tel" placeholder="05XX XXX XX XX"></div><div class="input-group"><label for="lookup-code">Randevu kodu</label><input type="text" id="lookup-code" required maxlength="64" autocomplete="off" placeholder="Örn: A3F91B72C0" autocapitalize="characters"></div><button type="submit" class="primary-btn">Randevuyu bul</button></form><p id="lookup-message" role="status" aria-live="polite"></p><div id="lookup-result" aria-live="polite"></div></section>
+        <section id="reviews" class="reviews-section" aria-label="Müşteri yorumları"><p class="eyebrow">MÜŞTERİ YORUMLARI</p><h2>Yorumlar</h2><p id="reviews-summary" class="reviews-summary" role="status"></p>
+          <div id="review-compose" class="review-compose" hidden><h3>Deneyiminizi paylaşın</h3><p id="review-for" class="review-for"></p><form id="review-form"><div id="star-input" class="star-input" role="group" aria-label="Puan"></div><label for="review-text" class="visually-hidden" style="position:absolute;left:-9999px">Yorumunuz</label><textarea id="review-text" maxlength="600" required placeholder="Hizmetimizden memnun kaldınız mı? Kısaca yazın…"></textarea><p id="review-count" class="review-count">0 / 600</p><button type="submit" class="primary-btn">Yorumu gönder</button><p id="review-message" role="status" aria-live="polite"></p></form></div>
+          <div id="reviews-list" aria-live="polite"></div></section>
         <section id="business-contact" class="business-contact" aria-label="İşletme adres ve iletişim bilgileri"><p class="contact-eyebrow" data-shop-name>Davut Şencan Hair Studio</p><h2>Bize ulaşın</h2><p data-business-empty>Adres ve iletişim bilgileri yakında paylaşılacak.</p><address data-business-address></address><p data-business-phone></p><div class="business-contact-actions"><a data-business-maps target="_blank" rel="noopener noreferrer">Yol tarifi al ↗</a><a data-business-call>İşletmeyi ara</a></div></section>
         
     </div>
 
-<footer class="site-footer"><div class="footer-grid"><section class="footer-brand"><a class="footer-monogram" href="index.html" aria-label="Şencan Hair Studio ana sayfa">Ş<span>HS</span></a><h2 data-shop-name>Davut Şencan Hair Studio</h2><p >Saç, sakal ve bakımda özenli dokunuşlar. Tarzınıza uygun hizmet için ekibimizle tanışın.</p></section><nav aria-label="Hızlı bağlantılar"><h2>Hızlı bağlantılar</h2><a href="index.html">Ana sayfa</a><a href="hakkimizda.html">Hakkımızda</a><a href="index.html#booking-flow" data-footer-booking>Randevu al</a><a href="index.html#business-contact">İletişim</a></nav><nav aria-label="Politikalar"><h2>Politikalar</h2><a href="cerez-politikasi.html">Çerez Politikası</a><a href="gizlilik-politikasi.html">Gizlilik ve KVKK</a><a href="kullanim-sartlari.html">Kullanım Şartları</a></nav><section class="footer-contact"><h2>İletişim</h2><a href="mailto:info@sencanhairstudio.com">info@sencanhairstudio.com</a><a data-footer-phone hidden></a><p data-footer-address hidden></p><a class="footer-contact-button" href="index.html#business-contact">Bize ulaşın ↗</a></section></div><div class="footer-bottom"><span>SAÇ · SAKAL · BAKIM</span><p>© 2026 <span data-shop-name>Davut Şencan Hair Studio</span>. Tüm hakları saklıdır.</p></div></footer>
+<footer class="site-footer"><div class="footer-grid"><section class="footer-brand"><a class="footer-monogram" href="index.html" aria-label="Şencan Hair Studio ana sayfa">Ş<span>HS</span></a><h2 data-shop-name>Davut Şencan Hair Studio</h2><p >Saç, sakal ve bakımda özenli dokunuşlar. Tarzınıza uygun hizmet için ekibimizle tanışın.</p></section><nav aria-label="Hızlı bağlantılar"><h2>Hızlı bağlantılar</h2><a href="index.html">Ana sayfa</a><a href="hakkimizda.html">Hakkımızda</a><a href="index.html#booking-flow" data-footer-booking>Randevu al</a><a href="index.html#reviews">Yorumlar</a><a href="index.html#business-contact">İletişim</a></nav><nav aria-label="Politikalar"><h2>Politikalar</h2><a href="cerez-politikasi.html">Çerez Politikası</a><a href="gizlilik-politikasi.html">Gizlilik ve KVKK</a><a href="kullanim-sartlari.html">Kullanım Şartları</a></nav><section class="footer-contact"><h2>İletişim</h2><a href="mailto:info@sencanhairstudio.com">info@sencanhairstudio.com</a><a data-footer-phone hidden></a><p data-footer-address hidden></p><a class="footer-contact-button" href="index.html#business-contact">Bize ulaşın ↗</a></section></div><div class="footer-bottom"><span>SAÇ · SAKAL · BAKIM</span><p>© 2026 <span data-shop-name>Davut Şencan Hair Studio</span>. Tüm hakları saklıdır.</p></div></footer>
     <script src="business-contact.js?v=12"></script>
     <script src="services.js?v=9"></script>
     <script src="client.js?v=20"></script>
     <script src="service-picker.js?v=9"></script>
     <script src="app.js?v=13"></script>
     <script src="studio-media.js?v=20"></script>
+<script src="reviews.js?v=1"></script>
+<script src="tick.js?v=1"></script>
 <script src="footer.js?v=20"></script>
 </body>
 </html>

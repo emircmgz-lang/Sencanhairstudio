@@ -28,7 +28,7 @@ function sc_drain_mail(PDO $db,array $c,int $limit=10,?string $bookingId=null): 
   }catch(Throwable $e){
    $error=$e instanceof ScMailError?$e->getMessage():'Gönderim hizmeti isteği tamamlanamadı.';
    $n=(int)$job['attempts']+1;
-   sc_query($db,'UPDATE sc_email_outbox SET status=?,attempts=?,next_attempt=?,last_error=? WHERE id=?',[$n>=5?'failed':'pending',$n,sc_ms()+min(60,2**$n)*60000,$error,$job['id']]);$result['errors']++;$result['lastError']=$error;
+   sc_query($db,'UPDATE sc_email_outbox SET status=?,attempts=?,next_attempt=?,last_error=? WHERE id=?',[$n>=8?'failed':'pending',$n,sc_ms()+min(30,2**$n)*60000,$error,$job['id']]);$result['errors']++;$result['lastError']=$error;
   }
  }
  return $result;

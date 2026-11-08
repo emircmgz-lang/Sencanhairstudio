@@ -5,11 +5,25 @@ require_once dirname(__DIR__,2).'/private/bootstrap.php';
 require_once dirname(__DIR__,2).'/private/backup.php';
 require_once dirname(__DIR__,2).'/private/mail.php';
 require_once dirname(__DIR__,2).'/private/media.php';
+require_once dirname(__DIR__,2).'/private/migrate.php';
+require_once dirname(__DIR__,2).'/private/tick.php';
+require_once dirname(__DIR__,2).'/private/reviews.php';
 sc_headers();
+// Cron'suz döngü: yanıt tarayıcıya gönderildikten SONRA, en fazla ~55 sn'de bir mail kuyruğu/yedek işlenir.
+$scTick=null;
+register_shutdown_function(function() use (&$scTick){
+ if(!$scTick)return;[$tdb,$tcfg,$force]=$scTick;
+ if(function_exists('fastcgi_finish_request'))@fastcgi_finish_request();
+ elseif(function_exists('litespeed_finish_request'))@litespeed_finish_request();
+ elseif(!$force)return; // yanıtı bırakamıyorsak ziyaretçiyi bekletmeyiz; yalnız /tick (arka plan isteği) çalıştırır
+ try{sc_tick($tdb,$tcfg);}catch(Throwable){error_log('Sencan tick tamamlanamadi.');}
+});
 try {
- $config=sc_config();$db=sc_db($config);sc_ready($db);
+ $config=sc_config();$db=sc_db($config);sc_ready($db);sc_migrate($db);
  $route=$_GET['route']??'/';if(!is_string($route))sc_fail(400,'Geçersiz adres.');$method=$_SERVER['REQUEST_METHOD'];$write=!in_array($method,['GET','HEAD'],true);if($write)sc_origin($config);$isUpload=$route==='/admin/hero-video'&&$method==='POST';$data=$write&&!$isUpload?sc_body():[];$session=sc_session($db);$business=sc_business($db);
+ if($route!=='/media')$scTick=[$db,$config,$route==='/tick'];
  if($route==='/media'&&in_array($method,['GET','HEAD'],true))sc_video_stream($business);
+ if($route==='/tick'&&in_array($method,['GET','POST'],true))sc_json(200,['ok'=>true]);
  if($route==='/health'&&$method==='GET')sc_json(200,['ok'=>true,'mode'=>'php-mysql']);
  if($route==='/config'&&$method==='GET'){$barbers=$session?$business['barbers']:array_values(array_filter($business['barbers'],fn($b)=>!empty($b['active'])&&empty($b['archived'])));if(!$session)$barbers=sc_public_barbers($barbers);sc_json(200,['business'=>array_replace($business,['barbers'=>$barbers]),'barbers'=>$barbers,'today'=>sc_today(),'maxDate'=>sc_max_date(),'admin'=>(bool)$session,'csrfToken'=>$session['csrf']??null,'storageMode'=>'server']);}
  if($route==='/availability'&&$method==='GET'){$date=$_GET['date']??'';if(!sc_valid_date($date))sc_fail(400,'Tarih geçersiz.');$id=filter_var($_GET['barberId']??0,FILTER_VALIDATE_INT)?:0;sc_json(200,sc_slots(sc_find_barber($business,$id),$date,sc_bookings($db,$date)));}
@@ -20,7 +34,7 @@ try {
   $result=sc_tx($db,function()use($db,$config,$id,$date,$time,$name,$phone,$payment,$priced,$key,$hash){
    if($key){$existing=sc_query($db,'SELECT * FROM sc_appointments WHERE request_key=?',[$key])->fetch();if($existing){if(!hash_equals($existing['request_hash'],$hash))sc_fail(409,'İstek anahtarı farklı bir kayıt için kullanılmış.');return ['booking'=>sc_booking($existing),'replayed'=>true];}}
    $b=sc_find_barber(sc_business($db),$id);$choices=sc_slots($b,$date,sc_bookings($db,$date));$ok=false;foreach($choices as $s)if($s['time']===$time&&$s['available'])$ok=true;if(!$ok)sc_fail(409,'Bu saat artık uygun değil. Başka bir saat seçin.');do{$code=strtoupper(bin2hex(random_bytes(5)));}while(sc_query($db,'SELECT id FROM sc_appointments WHERE code=?',[$code])->fetch());$bookingId=sc_uuid();$slotKey=$id.'|'.$date.'|'.sc_minutes($time);
-   sc_query($db,'INSERT INTO sc_appointments(id,code,barber_id,date,start,duration,name,phone,payment_method,status,created_at,request_key,request_hash,slot_key,services_json,total,price_from) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)',[$bookingId,$code,$id,$date,sc_minutes($time),$b['duration'],$name,$phone,$payment,'confirmed',sc_now(),$key,$key?$hash:null,$slotKey,json_encode($priced['services'],JSON_UNESCAPED_UNICODE|JSON_THROW_ON_ERROR),$priced['total'],(int)$priced['priceFrom']]);
+   sc_query($db,'INSERT INTO sc_appointments(id,code,barber_id,date,start,duration,name,phone,payment_method,status,created_at,request_key,request_hash,slot_key,services_json,total,price_from,ip_hash) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)',[$bookingId,$code,$id,$date,sc_minutes($time),$b['duration'],$name,$phone,$payment,'confirmed',sc_now(),$key,$key?$hash:null,$slotKey,json_encode($priced['services'],JSON_UNESCAPED_UNICODE|JSON_THROW_ON_ERROR),$priced['total'],(int)$priced['priceFrom'],sc_ip_hash($db,$config)]);
    if(sc_mail_ready($config)&&!empty($b['email']))sc_query($db,'INSERT INTO sc_email_outbox(id,booking_id,status,created_at) VALUES(?,?,?,?)',[sc_uuid(),$bookingId,'pending',sc_now()]);sc_audit($db,'booking_created',$bookingId);return ['booking'=>sc_booking(sc_query($db,'SELECT * FROM sc_appointments WHERE id=?',[$bookingId])->fetch()),'replayed'=>false];
   });sc_booking_response($db,$config,$result);
  }
@@ -32,6 +46,8 @@ try {
    $a['barberName']=sc_find_barber(sc_business($db),$a['barberId'])['name']??'Çalışan';$a['canCancel']=$can;$a['canReschedule']=$can;return $a;
   });sc_json(200,$result);
  }
+ if($route==='/reviews'&&$method==='GET'){$out=sc_reviews_public($db);$out['eligibility']=sc_review_eligible($db,$config,$business);sc_json(200,$out);}
+ if($route==='/reviews'&&$method==='POST'){sc_throttle($db,'review',10);$review=sc_review_create($db,$config,$data);sc_json(201,['review'=>$review]);}
  if($route==='/login'&&$method==='POST'){
   sc_throttle($db,'login',10);$password=$data['password']??null;if(!is_string($password)||strlen($password)>1024)sc_fail(401,'Şifre hatalı.');$admin=sc_query($db,'SELECT * FROM sc_admin WHERE id=1')->fetch();if(!sc_password_verify($password,$admin['password_hash']))sc_fail(401,'Şifre hatalı.');
   $out=sc_tx($db,function()use($db,$admin){$current=sc_query($db,'SELECT password_hash FROM sc_admin WHERE id=1')->fetchColumn();if(!hash_equals($current,$admin['password_hash']))sc_fail(401,'Şifre değişti; tekrar giriş yapın.');$token=bin2hex(random_bytes(32));$csrf=bin2hex(random_bytes(32));sc_query($db,'DELETE FROM sc_sessions WHERE expires<=?',[sc_ms()]);sc_query($db,'INSERT INTO sc_sessions(token_hash,csrf,expires) VALUES(?,?,?)',[hash('sha256',$token),$csrf,sc_ms()+8*3600000]);return ['token'=>$token,'csrf'=>$csrf];});sc_cookie($out['token'],$config);sc_json(200,['ok'=>true,'csrfToken'=>$out['csrf']]);
@@ -53,9 +69,11 @@ try {
   if($route==='/admin/mail/settings'&&$method==='PATCH'){if(!is_bool($data['autoSend']??null))sc_fail(400,'Otomatik gönderim ayarı geçersiz.');sc_tx($db,function()use($db,$data){$b=sc_business($db);$b['autoMail']=$data['autoSend'];sc_save_business($db,$b);sc_audit($db,'auto_mail_setting');});sc_json(200,['autoSend'=>$data['autoSend']]);}
   if($route==='/admin/mail/run'&&$method==='POST'){sc_throttle($db,'manual_mail_run',10,60);sc_json(200,sc_manual_mail_run($db,$config));}
   if($route==='/admin/mail/retry'&&$method==='POST'){sc_throttle($db,'mail_retry',5);$count=sc_tx($db,function()use($db){$now=new DateTimeImmutable('now',new DateTimeZone('Europe/Istanbul'));$today=$now->format('Y-m-d');$minutes=(int)$now->format('H')*60+(int)$now->format('i');$q=sc_query($db,"UPDATE sc_email_outbox o JOIN sc_appointments a ON a.id=o.booking_id SET o.status='pending',o.attempts=0,o.next_attempt=?,o.last_error=NULL WHERE o.status='failed' AND a.status='confirmed' AND (a.date>? OR (a.date=? AND a.start>?))",[sc_ms(),$today,$today,$minutes]);sc_audit($db,'mail_retry');return $q->rowCount();});sc_json(200,['requeued'=>$count]);}
-  if($route==='/admin/system'&&$method==='GET')sc_json(200,['storageMode'=>'server','mailEnabled'=>sc_mail_ready($config),'mailTransport'=>sc_mail_transport($config),'mailAutoSend'=>($business['autoMail']??true)===true,'sentEmails'=>(int)sc_query($db,"SELECT count(*) FROM sc_email_outbox WHERE status='sent'")->fetchColumn(),'lastMailError'=>sc_query($db,"SELECT last_error FROM sc_email_outbox WHERE status IN ('pending','failed') AND last_error IS NOT NULL ORDER BY created_at DESC LIMIT 1")->fetchColumn()?:null,'pendingEmails'=>(int)sc_query($db,"SELECT count(*) FROM sc_email_outbox WHERE status='pending'")->fetchColumn(),'failedEmails'=>(int)sc_query($db,"SELECT count(*) FROM sc_email_outbox WHERE status='failed'")->fetchColumn(),'lastBackup'=>sc_last_backup(),'backupKeepDays'=>(int)($config['backup_keep_days']??30),'backupNeedsCron'=>!is_file(dirname(__DIR__,2).'/private/cron-status.json'),'lastCron'=>is_file(dirname(__DIR__,2).'/private/cron-status.json')?json_decode(file_get_contents(dirname(__DIR__,2).'/private/cron-status.json'),true):null]);
+  if($route==='/admin/system'&&$method==='GET')sc_json(200,['storageMode'=>'server','mailEnabled'=>sc_mail_ready($config),'mailTransport'=>sc_mail_transport($config),'mailAutoSend'=>($business['autoMail']??true)===true,'sentEmails'=>(int)sc_query($db,"SELECT count(*) FROM sc_email_outbox WHERE status='sent'")->fetchColumn(),'lastMailError'=>sc_query($db,"SELECT last_error FROM sc_email_outbox WHERE status IN ('pending','failed') AND last_error IS NOT NULL ORDER BY created_at DESC LIMIT 1")->fetchColumn()?:null,'pendingEmails'=>(int)sc_query($db,"SELECT count(*) FROM sc_email_outbox WHERE status='pending'")->fetchColumn(),'failedEmails'=>(int)sc_query($db,"SELECT count(*) FROM sc_email_outbox WHERE status='failed'")->fetchColumn(),'lastTick'=>sc_tick_status($db),'lastBackup'=>sc_last_backup(),'backupKeepDays'=>(int)($config['backup_keep_days']??30),'backupNeedsCron'=>!is_file(dirname(__DIR__,2).'/private/cron-status.json'),'lastCron'=>is_file(dirname(__DIR__,2).'/private/cron-status.json')?json_decode(file_get_contents(dirname(__DIR__,2).'/private/cron-status.json'),true):null]);
   if($route==='/admin/backup'&&$method==='POST'){sc_throttle($db,'backup',4);$r=sc_make_backup($db,$config);sc_audit($db,'manual_backup');sc_json(200,$r);}
-  if($route==='/admin/export'&&$method==='GET'){header('Content-Disposition: attachment; filename="sencan-kayitlar.json"');sc_json(200,['schemaVersion'=>1,'exportedAt'=>sc_now(),'business'=>$business,'appointments'=>array_map('sc_booking',sc_query($db,'SELECT * FROM sc_appointments ORDER BY date,start')->fetchAll())]);}
+  if($route==='/admin/reviews'&&$method==='GET')sc_json(200,['reviews'=>sc_reviews_admin($db,$business)]);
+  if(preg_match('~^/admin/reviews/([a-f0-9-]{36})$~D',$route,$m)&&$method==='PATCH'){$r=sc_review_admin_update($db,$m[1],$data);sc_json(200,['ok'=>true,'review'=>sc_review_public($r)+['visible'=>(int)$r['visible']===1]]);}
+  if($route==='/admin/export'&&$method==='GET'){header('Content-Disposition: attachment; filename="sencan-kayitlar.json"');sc_json(200,['schemaVersion'=>1,'exportedAt'=>sc_now(),'business'=>$business,'appointments'=>array_map('sc_booking',sc_query($db,'SELECT * FROM sc_appointments ORDER BY date,start')->fetchAll()),'reviews'=>sc_reviews_admin($db,$business)]);}
  }
  sc_fail(404,'Bulunamadı.');
 }catch(ScError $e){sc_json($e->getCode(),['error'=>$e->getMessage()]);}catch(PDOException $e){error_log('Sencan veritabani islemi basarisiz. SQLSTATE: '.$e->getCode());sc_json($e->getCode()==='23000'?409:500,['error'=>$e->getCode()==='23000'?'Kayıt çakışması oluştu. Sayfayı yenileyip tekrar deneyin.':'İşlem tamamlanamadı. Lütfen tekrar deneyin.']);}catch(Throwable){error_log('Sencan sunucu islemi tamamlanamadi.');sc_json(500,['error'=>'İşlem tamamlanamadı. Lütfen tekrar deneyin.']);}

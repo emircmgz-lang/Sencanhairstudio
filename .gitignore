@@ -7,3 +7,4 @@ private/.cron.lock
 .DS_Store
 
 private/media/
+private/.migrated-v2
