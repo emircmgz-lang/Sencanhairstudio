@@ -1,21 +1,29 @@
-# Yorum sistemi + cron'suz otomatik döngü
+# Güncelleme notları (yorumlar, galeri, duyuru, takvim, cron'suz döngü)
 
 ## Yükleme
-Değişen/yeni dosyaları aynı yerlerine yükleyin (eski dosyaları silmeyin). SQL çalıştırmanız gerekmez: ilk API isteğinde `private/migrate.php` yeni tabloları ve `ip_hash` sütununu kendisi ekler. `private/config.php` değişmez.
-
-Yeni: `private/migrate.php`, `private/tick.php`, `private/reviews.php`, `public_html/reviews.js|css`, `tick.js`, `admin-reviews.js`.
-Değişen: `api/index.php`, `index.html`, `admin.html`, `admin.js`, `server-admin.js`, `private/schema.sql`, `backup.php`, `mail.php`, `gizlilik-politikasi.html`.
+Dosyaları aynı yerlerine yükleyin, eskileri silmeyin. SQL gerekmez: ilk API isteğinde `private/migrate.php` yeni tabloları (`sc_reviews`, `sc_gallery`, `sc_kv`) kendisi oluşturur. `config.php` değişmez.
+Yeni: `private/migrate.php tick.php reviews.php gallery.php`, `public_html/reviews.js|css gallery.js|css calendar.js tick.js admin-reviews.js admin-gallery.js`.
 
 ## Yorumlar
-- Ana sayfada menüde **Yorumlar** bağlantısı ve sayfa altında yorum listesi vardır; herkes okur.
-- Yazma formu yalnızca sunucu şunu doğrularsa görünür: aynı IP'den alınmış, **başlangıç saati geçmiş**, iptal edilmemiş ve henüz yorumlanmamış randevu (son 30 gün). Her randevu için tek yorum.
-- IP düz saklanmaz, sunucuya özel tuzlu HMAC özeti saklanır (IPv6'da /64 öneki). Gizlilik metnine eklendi.
-- Admin panelinde **Yorumlar** sekmesi: isim, puan, metin düzenleme; sitede gizle/yayınla.
-- Cloudflare vb. arkasındaysanız `config.php` içine `'ip_header' => 'HTTP_CF_CONNECTING_IP'` ekleyin. Süre için `'review_window_days' => 30`.
+- Girişin hemen altında son 3 yorum + "Tüm yorumları gör" / "Yorum yaz" / "Google'da puan ver" düğmeleri. Tüm yorumlar pencerede açılır, usta filtresiyle.
+- Herkes yazabilir (randevu/saat/IP şartı yok). Ad, usta (isteğe bağlı), puan, metin. Bağlantı içeren yorum reddedilir, gizli bot tuzağı + IP başına saatte 5 yorum sınırı var.
+- Çalışan bazlı puan: usta kartında "★ 4,8 · 12 yorum"; tıklayınca o ustanın yorumları açılır.
+- Admin → Yorumlar: isim, usta, puan, metin düzenleme; gizle/yayınla.
+- Google bağlantısı: Admin → İşletme Ayarları → "Google yorum bağlantısı".
 
-**Sınır:** IP ile doğrulama kesin kimlik değildir. Ortak Wi-Fi/operatör IP'sinde başkası yazabilir; müşteri randevudan sonra farklı ağa geçerse (Wi-Fi → mobil veri) formu göremez.
+## Galeri
+- Menüde "Bize ulaşın" yerine "Galeri". Bölümde ilk 6 görsel, "Tüm galeriyi gör" ile devamı, tıklayınca büyür (kaydırma/ok tuşları). Görsel yoksa bölüm ve menü bağlantısı gizlenir.
+- "Bize ulaşın" (adres/yol tarifi) bölümü galerinin altında duruyor, footer bağlantısı da.
+- Admin → Galeri: çoklu görsel yükle (JPG/JPEG/PNG/WebP, otomatik küçültülür), açıklama, ↑↓ sıralama, sil. En fazla 40.
+
+## Duyuru
+Admin → İşletme Ayarları → "Duyuru (tatil / kapalı gün)". Doluysa sayfanın en üstünde bant olarak görünür; isteğe bağlı son gün geçince kalkar.
+
+## Takvime ekle
+Randevu onay ekranında ve "Randevumu sorgula" kartında: Google Takvim + .ics (iPhone/Outlook). Randevudan 1 saat önce hatırlatma içerir.
+
+## Usta fotoğrafı
+Fotoğraf artık 4:3 kırpılıp iç oval çerçevenin tam içine oturuyor. Mevcut ustaların fotoğrafını panelden bir kez yeniden yükleyin (eski kayıtlar düşük çözünürlüklü kare). JPG/JPEG artık her yerde kabul edilir.
 
 ## Cron'suz döngü
-`tick.js` (site ve panel açıkken dakikada bir) ve her API isteğinin sonu sunucuyu dürter. Sunucu işi en fazla ~55 sn'de bir, kilitle tek seferde yapar: mail kuyruğu + tekrar denemeler (8 deneme, 2→30 dk aralık), günlük yedek, eski oturum/limit temizliği. Durum admin → İşletme Ayarları → Güvenlik'te görünür.
-Hiç ziyaretçi/panel yoksa döngü de çalışmaz. İsterseniz ücretsiz bir uptime servisinden `https://alanadiniz.com/api/tick` adresine dakikada bir GET attırabilirsiniz.
-`private/cron.php` durur; ileride cron açılırsa aynı kilidi kullanır.
+`tick.js` + her API isteğinin sonu sunucuyu dürter; mail kuyruğu/tekrar deneme, günlük yedek ve temizlik ~55 sn'de bir, kilitle tek seferde çalışır. Ziyaretçi/panel yoksa çalışmaz; isterseniz ücretsiz uptime servisinden `https://alanadiniz.com/api/tick` adresine dakikada bir GET attırın.

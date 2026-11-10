@@ -12,13 +12,15 @@
     <link rel="stylesheet" href="heritage.css?v=7">
     <link rel="stylesheet" href="services.css?v=10">
     <link rel="stylesheet" href="mobile-polish.css?v=12">
-    <link rel="stylesheet" href="employee-profiles.css?v=16">
+    <link rel="stylesheet" href="employee-profiles.css?v=17">
     <link rel="stylesheet" href="cinema.css?v=15">
 <link rel="stylesheet" href="footer.css?v=16">
-<link rel="stylesheet" href="reviews.css?v=1">
+<link rel="stylesheet" href="reviews.css?v=2">
+<link rel="stylesheet" href="gallery.css?v=1">
 </head>
 <body class="customer-theme">
     <div class="app-container">
+        <div class="studio-notice" data-notice role="status" hidden><span class="studio-notice-icon" aria-hidden="true">📢</span><p data-notice-text></p></div>
         <header class="cinema-header">
           <div class="studio-ticker" aria-label="Şencan Hair Studio"><div class="studio-ticker-track" aria-hidden="true"><span>ŞENCAN HAIR STUDIO · ŞENCAN HAIR STUDIO · ŞENCAN HAIR STUDIO · </span><span>ŞENCAN HAIR STUDIO · ŞENCAN HAIR STUDIO · ŞENCAN HAIR STUDIO · </span></div></div>
           <div class="cinema-stage">
@@ -37,7 +39,9 @@
           </div>
         </header>
 
-        <nav class="customer-nav" aria-label="Randevu işlemleri"><button type="button" id="show-booking" class="active">Randevu al</button><button type="button" id="show-lookup">Randevumu sorgula</button><a class="customer-contact-link" href="#reviews">Yorumlar</a><a class="customer-contact-link" href="#business-contact">Bize ulaşın</a></nav>
+        <section id="reviews" class="reviews-teaser" aria-label="Müşteri yorumları"><p class="eyebrow">MÜŞTERİ YORUMLARI</p><p id="reviews-summary" class="reviews-summary" role="status"></p><div id="reviews-preview" class="reviews-preview"></div><div class="reviews-actions"><button type="button" id="reviews-all" class="secondary-btn">Tüm yorumları gör</button><button type="button" id="reviews-write" class="secondary-btn">Yorum yaz</button><a data-google-review class="secondary-btn" href="https://maps.app.goo.gl/cvddDSNm4eMHSWBM7" target="_blank" rel="noopener noreferrer">Google’da puan ver ↗</a></div></section>
+
+        <nav class="customer-nav" aria-label="Randevu işlemleri"><button type="button" id="show-booking" class="active">Randevu al</button><button type="button" id="show-lookup">Randevumu sorgula</button><a class="customer-contact-link" href="#gallery" data-gallery-link>Galeri</a></nav>
         <p id="message" role="status" aria-live="polite"></p>
         <main id="booking-flow">
             <!-- Step 1: Select Barber -->
@@ -89,25 +93,29 @@
                 <div class="success-icon">✓</div>
                 <h2>Randevunuz Alındı!</h2>
                 <p><span id="success-details"></span></p><p id="success-services"></p>
-                <div class="booking-code"><small>RANDEVU KODUNUZ</small><strong id="booking-reference"></strong><p>Bu kodu saklayın. Telefon numaranızla birlikte sorgulama ve iptal için kullanılır.</p><button type="button" id="copy-code">Kodu kopyala</button></div><button type="button" id="success-lookup" class="secondary-btn">Randevumu görüntüle</button>
+                <div class="booking-code"><small>RANDEVU KODUNUZ</small><strong id="booking-reference"></strong><p>Bu kodu saklayın. Telefon numaranızla birlikte sorgulama ve iptal için kullanılır.</p><button type="button" id="copy-code">Kodu kopyala</button></div><div id="calendar-actions" class="calendar-actions"></div><button type="button" id="success-lookup" class="secondary-btn">Randevumu görüntüle</button>
                 <button class="secondary-btn" onclick="resetFlow()">Yeni Randevu Al</button>
             </section>
         </main><section id="lookup-section" class="lookup-section" hidden><div class="eyebrow">RANDEVUNUZ KONTROLÜNÜZDE</div><h2>Randevunuzu sorgulayın</h2><p>Telefon numaranız ve randevu kodunuzla detayları görün.</p><form id="lookup-form"><div class="input-group"><label for="lookup-phone">Telefon numarası</label><input id="lookup-phone" type="tel" required autocomplete="tel" placeholder="05XX XXX XX XX"></div><div class="input-group"><label for="lookup-code">Randevu kodu</label><input type="text" id="lookup-code" required maxlength="64" autocomplete="off" placeholder="Örn: A3F91B72C0" autocapitalize="characters"></div><button type="submit" class="primary-btn">Randevuyu bul</button></form><p id="lookup-message" role="status" aria-live="polite"></p><div id="lookup-result" aria-live="polite"></div></section>
-        <section id="reviews" class="reviews-section" aria-label="Müşteri yorumları"><p class="eyebrow">MÜŞTERİ YORUMLARI</p><h2>Yorumlar</h2><p id="reviews-summary" class="reviews-summary" role="status"></p>
-          <div id="review-compose" class="review-compose" hidden><h3>Deneyiminizi paylaşın</h3><p id="review-for" class="review-for"></p><form id="review-form"><div id="star-input" class="star-input" role="group" aria-label="Puan"></div><label for="review-text" class="visually-hidden" style="position:absolute;left:-9999px">Yorumunuz</label><textarea id="review-text" maxlength="600" required placeholder="Hizmetimizden memnun kaldınız mı? Kısaca yazın…"></textarea><p id="review-count" class="review-count">0 / 600</p><button type="submit" class="primary-btn">Yorumu gönder</button><p id="review-message" role="status" aria-live="polite"></p></form></div>
-          <div id="reviews-list" aria-live="polite"></div></section>
+        <section id="gallery" class="gallery-section" aria-label="Galeri" hidden><p class="eyebrow">GALERİ</p><h2>Çalışmalarımız</h2><div id="gallery-grid" class="gallery-grid"></div><button type="button" id="gallery-more" class="secondary-btn" hidden>Tüm galeriyi gör</button></section>
         <section id="business-contact" class="business-contact" aria-label="İşletme adres ve iletişim bilgileri"><p class="contact-eyebrow" data-shop-name>Davut Şencan Hair Studio</p><h2>Bize ulaşın</h2><p data-business-empty>Adres ve iletişim bilgileri yakında paylaşılacak.</p><address data-business-address></address><p data-business-phone></p><div class="business-contact-actions"><a data-business-maps target="_blank" rel="noopener noreferrer">Yol tarifi al ↗</a><a data-business-call>İşletmeyi ara</a></div></section>
         
     </div>
 
-<footer class="site-footer"><div class="footer-grid"><section class="footer-brand"><a class="footer-monogram" href="index.html" aria-label="Şencan Hair Studio ana sayfa">Ş<span>HS</span></a><h2 data-shop-name>Davut Şencan Hair Studio</h2><p >Saç, sakal ve bakımda özenli dokunuşlar. Tarzınıza uygun hizmet için ekibimizle tanışın.</p></section><nav aria-label="Hızlı bağlantılar"><h2>Hızlı bağlantılar</h2><a href="index.html">Ana sayfa</a><a href="hakkimizda.html">Hakkımızda</a><a href="index.html#booking-flow" data-footer-booking>Randevu al</a><a href="index.html#reviews">Yorumlar</a><a href="index.html#business-contact">İletişim</a></nav><nav aria-label="Politikalar"><h2>Politikalar</h2><a href="cerez-politikasi.html">Çerez Politikası</a><a href="gizlilik-politikasi.html">Gizlilik ve KVKK</a><a href="kullanim-sartlari.html">Kullanım Şartları</a></nav><section class="footer-contact"><h2>İletişim</h2><a href="mailto:info@sencanhairstudio.com">info@sencanhairstudio.com</a><a data-footer-phone hidden></a><p data-footer-address hidden></p><a class="footer-contact-button" href="index.html#business-contact">Bize ulaşın ↗</a></section></div><div class="footer-bottom"><span>SAÇ · SAKAL · BAKIM</span><p>© 2026 <span data-shop-name>Davut Şencan Hair Studio</span>. Tüm hakları saklıdır.</p></div></footer>
+<footer class="site-footer"><div class="footer-grid"><section class="footer-brand"><a class="footer-monogram" href="index.html" aria-label="Şencan Hair Studio ana sayfa">Ş<span>HS</span></a><h2 data-shop-name>Davut Şencan Hair Studio</h2><p >Saç, sakal ve bakımda özenli dokunuşlar. Tarzınıza uygun hizmet için ekibimizle tanışın.</p></section><nav aria-label="Hızlı bağlantılar"><h2>Hızlı bağlantılar</h2><a href="index.html">Ana sayfa</a><a href="hakkimizda.html">Hakkımızda</a><a href="index.html#booking-flow" data-footer-booking>Randevu al</a><a href="index.html#reviews">Yorumlar</a><a href="index.html#gallery">Galeri</a><a href="index.html#business-contact">İletişim</a></nav><nav aria-label="Politikalar"><h2>Politikalar</h2><a href="cerez-politikasi.html">Çerez Politikası</a><a href="gizlilik-politikasi.html">Gizlilik ve KVKK</a><a href="kullanim-sartlari.html">Kullanım Şartları</a></nav><section class="footer-contact"><h2>İletişim</h2><a href="mailto:info@sencanhairstudio.com">info@sencanhairstudio.com</a><a data-footer-phone hidden></a><p data-footer-address hidden></p><a class="footer-contact-button" href="index.html#business-contact">Bize ulaşın ↗</a></section></div><div class="footer-bottom"><span>SAÇ · SAKAL · BAKIM</span><p>© 2026 <span data-shop-name>Davut Şencan Hair Studio</span>. Tüm hakları saklıdır.</p></div></footer>
+    <dialog id="reviews-dialog" class="studio-dialog reviews-dialog" aria-labelledby="reviews-dialog-title"><div class="dialog-head"><h2 id="reviews-dialog-title">Müşteri yorumları</h2><button type="button" class="dialog-close" data-close aria-label="Kapat">✕</button></div><p id="reviews-dialog-summary" class="reviews-summary"></p>
+      <form id="review-form" class="review-form" hidden><h3>Deneyiminizi paylaşın</h3><label for="review-name">Adınız (veya takma ad)</label><input id="review-name" maxlength="40" required autocomplete="given-name" placeholder="Örn: Ahmet"><label for="review-barber">Hangi usta?</label><select id="review-barber"><option value="">Genel (dükkan)</option></select><div id="star-input" class="star-input" role="group" aria-label="Puan"></div><label for="review-text">Yorumunuz</label><textarea id="review-text" maxlength="600" required placeholder="Hizmetimizden memnun kaldınız mı? Kısaca yazın…"></textarea><p id="review-count" class="review-count">0 / 600</p><input id="review-website" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px"><button type="submit" class="primary-btn">Yorumu gönder</button><p id="review-message" role="status" aria-live="polite"></p></form>
+      <div class="reviews-filter"><label for="reviews-filter">Usta:</label><select id="reviews-filter"><option value="">Tümü</option></select><button type="button" id="reviews-dialog-write" class="secondary-btn">Yorum yaz</button></div><div id="reviews-list" class="reviews-list" aria-live="polite"></div></dialog>
+    <dialog id="gallery-dialog" class="studio-dialog gallery-dialog" aria-label="Galeri"><button type="button" class="dialog-close" data-close aria-label="Kapat">✕</button><figure><img id="gallery-big" alt=""><figcaption id="gallery-caption"></figcaption></figure><div class="gallery-nav"><button type="button" id="gallery-prev" aria-label="Önceki">‹</button><span id="gallery-count"></span><button type="button" id="gallery-next" aria-label="Sonraki">›</button></div></dialog>
     <script src="business-contact.js?v=12"></script>
     <script src="services.js?v=9"></script>
-    <script src="client.js?v=20"></script>
+    <script src="client.js?v=21"></script>
     <script src="service-picker.js?v=9"></script>
-    <script src="app.js?v=13"></script>
+    <script src="calendar.js?v=1"></script>
+    <script src="app.js?v=14"></script>
     <script src="studio-media.js?v=20"></script>
-<script src="reviews.js?v=1"></script>
+<script src="reviews.js?v=2"></script>
+<script src="gallery.js?v=1"></script>
 <script src="tick.js?v=1"></script>
 <script src="footer.js?v=20"></script>
 </body>

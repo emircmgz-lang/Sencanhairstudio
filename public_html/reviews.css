@@ -1,23 +1,54 @@
-.reviews-section{padding:10px 38px 40px;scroll-margin-top:24px}
-.reviews-section .eyebrow{text-align:center;font-size:9px;letter-spacing:.2em;color:var(--atelier-gold,#78643c);margin-bottom:10px}
-.reviews-section h2{text-align:center;margin-bottom:8px}
-.reviews-summary{text-align:center;font-size:12px;color:var(--atelier-muted,#84765f);margin:0 0 22px}
+/* Girişin altındaki yorum şeridi */
+.reviews-teaser{padding:26px 38px 6px;text-align:center}
+.reviews-teaser .eyebrow{font-size:9px;letter-spacing:.2em;color:var(--atelier-gold,#78643c);margin:0 0 8px}
+.reviews-summary{font-size:13px;color:var(--atelier-gold,#78643c);margin:0 0 16px}
+.reviews-preview{display:grid;grid-template-columns:1fr;gap:10px;text-align:left}
+.reviews-actions{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin:16px 0 4px}
+.reviews-actions .secondary-btn{text-decoration:none;display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:10px 18px;font-size:12px;cursor:pointer}
 .review-stars{letter-spacing:.12em;color:var(--atelier-gold,#78643c);white-space:nowrap}
 .review-stars .off{opacity:.28}
-.review-card{border:1px solid var(--atelier-line,#c8b997);background:var(--atelier-panel,#f8f4e9);border-radius:18px;padding:18px 20px;margin:0 0 14px;min-width:0}
-.review-card header{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap;margin:0 0 8px;padding:0;background:none}
+.review-card{border:1px solid var(--atelier-line,#c8b997);background:var(--atelier-panel,#f8f4e9);border-radius:16px;padding:14px 16px;min-width:0}
+.review-card header{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap;margin:0 0 4px;padding:0;background:none}
 .review-card strong{color:var(--atelier-ink,#302b21);font-size:14px;overflow-wrap:anywhere}
 .review-card time{font-size:11px;color:var(--atelier-muted,#84765f)}
-.review-card p{margin:8px 0 0;font-size:13px;line-height:1.75;color:var(--atelier-ink,#302b21);white-space:pre-wrap;overflow-wrap:anywhere}
+.review-meta{display:flex;align-items:center;flex-wrap:wrap;gap:4px 12px;font-size:12px}
+.review-barber{color:var(--atelier-muted,#84765f);font-size:11px}
+.review-card p{margin:8px 0 0;font-size:13px;line-height:1.7;color:var(--atelier-ink,#302b21);white-space:pre-wrap;overflow-wrap:anywhere}
+.review-card p.clamp{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
 .review-empty{text-align:center;font-size:12px;color:var(--atelier-muted,#84765f)}
-.review-compose{border:1px solid var(--atelier-gold,#78643c);border-radius:20px;padding:22px;margin:0 0 24px;background:var(--atelier-soft,#e9e0cb)}
-.review-compose h3{margin:0 0 4px;font:22px Georgia,serif;color:var(--atelier-gold,#78643c);text-align:center}
-.review-compose .review-for{font-size:12px;text-align:center;color:var(--atelier-muted,#84765f);margin:0 0 16px}
-.star-input{display:flex;justify-content:center;gap:6px;margin:0 0 16px}
+/* Ortak pencere (yorumlar + galeri) */
+.studio-dialog{border:1px solid var(--atelier-gold,#78643c);border-radius:22px;padding:0;background:var(--atelier-surface,#fffdf6);color:var(--atelier-ink,#302b21);width:min(640px,calc(100vw - 24px));max-height:calc(100dvh - 24px);overflow:auto;box-sizing:border-box}
+.studio-dialog::backdrop{background:#000b}
+.reviews-dialog{padding:22px 22px 26px}
+.dialog-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:0 0 6px}
+.dialog-head h2{margin:0;font:24px Georgia,serif;color:var(--atelier-gold,#78643c);text-align:left}
+.dialog-close{border:1px solid var(--atelier-line,#c8b997);background:transparent;color:var(--atelier-ink,#302b21);border-radius:50%;width:44px;height:44px;font-size:16px;cursor:pointer;flex:none}
+.reviews-dialog .reviews-summary{text-align:left}
+.reviews-filter{display:flex;align-items:center;flex-wrap:wrap;gap:8px 12px;margin:0 0 14px}
+.reviews-filter label{font-size:12px;color:var(--atelier-muted,#84765f)}
+.reviews-filter select{flex:1 1 140px;min-height:44px;border-radius:14px;padding:8px 12px;background:var(--atelier-field,#fffefa);border:1px solid var(--atelier-line,#c8b997);color:var(--atelier-ink,#302b21)}
+.reviews-filter .secondary-btn{min-height:44px;padding:8px 16px;font-size:12px;cursor:pointer}
+.reviews-list{display:grid;gap:10px}
+.review-form{border:1px solid var(--atelier-gold,#78643c);border-radius:18px;padding:18px;margin:0 0 18px;background:var(--atelier-soft,#e9e0cb);display:grid;gap:8px}
+.review-form[hidden]{display:none}
+.review-form h3{margin:0 0 4px;font:21px Georgia,serif;color:var(--atelier-gold,#78643c);text-align:center}
+.review-form label{font-size:12px;color:var(--atelier-gold,#78643c)}
+.review-form input:not([type=hidden]),.review-form select,.review-form textarea{width:100%;box-sizing:border-box;min-height:46px;padding:11px 14px;font-size:16px;border-radius:14px;background:var(--atelier-field,#fffefa);border:1px solid var(--atelier-line,#c8b997);color:var(--atelier-ink,#302b21)}
+.review-form textarea{min-height:110px;resize:vertical}
+.star-input{display:flex;justify-content:center;gap:4px;margin:4px 0}
 .star-input button{border:0;background:none;font-size:34px;line-height:1;padding:4px 6px;cursor:pointer;color:var(--atelier-muted,#84765f);opacity:.45;min-width:44px;min-height:44px}
 .star-input button.on{color:var(--atelier-gold,#78643c);opacity:1}
-.review-compose textarea{width:100%;box-sizing:border-box;min-height:110px;padding:14px 16px;font-size:15px;border-radius:16px;background:var(--atelier-field,#fffefa);border:1px solid var(--atelier-line,#c8b997);color:var(--atelier-ink,#302b21);resize:vertical}
-.review-compose .review-count{font-size:11px;text-align:right;color:var(--atelier-muted,#84765f);margin:6px 2px 14px}
-.review-compose .primary-btn{width:100%}
-#review-message{font-size:12px;text-align:center;margin:12px 0 0;min-height:1.2em;color:var(--atelier-gold,#78643c)}
-@media(max-width:560px){.reviews-section{padding:10px 22px 32px}.review-card{padding:16px}}
+.review-count{font-size:11px;text-align:right;color:var(--atelier-muted,#84765f);margin:0}
+#review-message{font-size:12px;text-align:center;margin:4px 0 0;min-height:1.2em;color:var(--atelier-gold,#78643c)}
+.reviews-dialog .reviews-summary a{color:var(--atelier-gold,#78643c)}
+/* Tatil / kapalı gün duyurusu */
+.studio-notice{display:flex;align-items:center;justify-content:center;gap:10px;padding:12px 18px;background:var(--atelier-gold,#78643c);color:var(--atelier-button-ink,#fffaf0);font-size:13px;line-height:1.55;text-align:center}
+.studio-notice[hidden]{display:none}
+.studio-notice p{margin:0;white-space:pre-wrap;overflow-wrap:anywhere;color:inherit;font-size:inherit}
+/* Takvime ekle */
+.calendar-actions{margin:14px 0 6px;text-align:center}
+.calendar-label{font-size:12px;color:var(--atelier-muted,#84765f);margin:0 0 8px}
+.calendar-row{display:flex;flex-wrap:wrap;justify-content:center;gap:10px}
+.calendar-btn{text-decoration:none;display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:10px 18px;font-size:12px;cursor:pointer}
+@media(min-width:700px){.reviews-preview{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:560px){.reviews-teaser{padding:22px 22px 4px}.reviews-dialog{padding:18px 16px 22px}}
